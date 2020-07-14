@@ -4,6 +4,9 @@ import {NavigationContainer} from '@react-navigation/native';
 
 import HomeScreen from './screens/Home/HomeScreen';
 import ProjectScreen from './screens/Projects/ProjectScreen';
+import ViewNotes from './screens/ViewNotes/ViewNotes';
+import AddNotes from './screens/AddNotes/AddNotes';
+import ProjectNote from './screens/ProjectNote/ProjectNote';
 
 import rootReducer from './store/index';
 import {Provider} from 'react-redux';
@@ -26,6 +29,9 @@ export const Routes: React.FC<RoutesProps> = ({}) => {
         <Stack.Navigator initialRouteName="Home">
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Projects" component={ProjectScreen} />
+          <Stack.Screen name="Notes" component={ViewNotes} />
+          <Stack.Screen name="AddNotes" component={AddNotes} />
+          <Stack.Screen name="ProjectNote" component={ProjectNote} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

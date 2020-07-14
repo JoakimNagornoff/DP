@@ -15,6 +15,7 @@ import {
   AddProjectName,
   getAllProjects,
   submitNewProject,
+  getAllNotes,
 } from 'store/actions/action';
 import firebase from '@react-native-firebase/app';
 import ActivityIndicatorExample from 'components/ActivityIndicatorExample';
@@ -57,6 +58,14 @@ class HomeScreen extends Component<Props, State, {}> {
 
     return (
       <View style={style.container}>
+        <TouchableOpacity
+          style={style.notesSceenButton}
+          onPress={() => {
+            navigate('Notes');
+          }}>
+          <Text>Anteckningar</Text>
+        </TouchableOpacity>
+
         <Text>Projekt</Text>
         <FlatList
           data={this.props.projects}
@@ -123,6 +132,7 @@ const mapDispatchToProps = {
   AddProjectName,
   getAllProjects,
   submitNewProject,
+  getAllNotes,
 };
 
 const connector = connect(
@@ -153,6 +163,13 @@ const style = StyleSheet.create({
     marginHorizontal: 16,
     height: 80,
     width: 360,
+  },
+  notesSceenButton: {
+    height: 40,
+    width: 360,
+    borderRadius: 1,
+    alignSelf: 'center',
+    backgroundColor: '#5bb1cd',
   },
 });
 

@@ -19,6 +19,10 @@ import {
   AddProjectDate,
   AddProjectHours,
   submitWorkingDay,
+  AddProjectNoteTitle,
+  AddProjectNoteText,
+  submitProjectNote,
+  getAllNotes,
 } from 'store/actions/action';
 import ActivityIndicatorExample from 'components/ActivityIndicatorExample';
 import {FlatList} from 'react-native-gesture-handler';
@@ -49,10 +53,19 @@ function formatDate(date: string | Date | number) {
   return [year, month, day].join('-');
 }
 
+function shortenString(text: string) {
+  const MAX_LENGTH = 50;
+  if (text.length <= MAX_LENGTH) {
+    return text;
+  }
+  return text.substring(0, MAX_LENGTH - 3) + '...';
+}
+
 interface State {
   thisProject: any[];
   show: boolean;
   datepickerOpen: boolean;
+  addNoteShow: boolean;
 }
 
 function Item({date, hours}) {
@@ -60,6 +73,14 @@ function Item({date, hours}) {
     <View style={style.projectItem}>
       <Text>{formatDate(date)}</Text>
       <Text>{hours}</Text>
+    </View>
+  );
+}
+function ItemNote({title, text}) {
+  return (
+    <View style={style.projectItem}>
+      <Text>{title}</Text>
+      <Text>{shortenString(text)}</Text>
     </View>
   );
 }
@@ -71,6 +92,7 @@ class ProjectScreen extends Component<Props, State, {}> {
       thisProject: [],
       show: false,
       datepickerOpen: false,
+      addNoteShow: false,
     };
   }
   _onChange = form => console.log(form);
@@ -90,8 +112,19 @@ class ProjectScreen extends Component<Props, State, {}> {
       show: false,
     });
   }
+  handleSubmitProjectNoteFirebase() {
+    this.props.submitProjectNote(
+      this.props.route.params.id,
+      this.props.title,
+      this.props.text,
+    );
+    this.setState({
+      addNoteShow: false,
+    });
+  }
 
   render() {
+    const {navigate} = this.props.navigation;
     if (!this.props.project) {
       return <Text>No project lol</Text>;
     }
@@ -102,7 +135,60 @@ class ProjectScreen extends Component<Props, State, {}> {
     return (
       <View style={style.container}>
         <Text style={style.headerTitle}>{name}</Text>
-        <Text style={style.headerTitle}>{id}</Text>
+        <TouchableOpacity
+          onPress={() => {
+            this.setState({addNoteShow: true});
+          }}>
+          <Text>add</Text>
+        </TouchableOpacity>
+        <Modal transparent={true} visible={this.state.addNoteShow}>
+          <View style={{backgroundColor: ' #ff0000', flex: 1}}>
+            <View
+              style={{
+                backgroundColor: '#ffffff',
+                margin: 50,
+                padding: 40,
+                width: 300,
+                height: 400,
+              }}>
+              <Text style={style.headerTitle}>{name}</Text>
+              <Text>Anteckningar</Text>
+              <TextInput
+                style={style.input}
+                placeholder="Titel"
+                onChangeText={this.props.AddProjectNoteTitle}
+              />
+              <TextInput
+                style={style.input}
+                placeholder="Text"
+                onChangeText={this.props.AddProjectNoteText}
+              />
+              <TouchableOpacity
+                onPress={() => {
+                  this.handleSubmitProjectNoteFirebase();
+                }}>
+                <Text>ADD</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+        {this.props.project.projectNotes && (
+          <FlatList
+            data={this.props.project.projectNotes}
+            renderItem={({item, index}) => (
+              <TouchableOpacity
+                onPress={() =>
+                  navigate('AddNotes', {
+                    index,
+                  })
+                }>
+                <ItemNote title={item.title} text={item.text} />
+              </TouchableOpacity>
+            )}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        )}
+
         {this.props.project.workingDays && (
           <FlatList
             data={this.props.project.workingDays}
@@ -162,6 +248,7 @@ class ProjectScreen extends Component<Props, State, {}> {
                   onChange={this.setDate}
                 />
               )}
+
               <TouchableOpacity
                 onPress={() => {
                   this.handleSubmitToFirebase();
@@ -185,12 +272,18 @@ function mapStateToProps(state: RootState, props: OwnProps) {
     project: state.projectReducer.projects.find(
       project => project.id === props.route.params.id,
     ),
+    title: state.projectReducer.chooseNotesTitle,
+    text: state.projectReducer.chooseNotesText,
   };
 }
 const mapDispatchToProps = {
   AddProjectDate,
   submitWorkingDay,
   AddProjectHours,
+  AddProjectNoteTitle,
+  AddProjectNoteText,
+  submitProjectNote,
+  getAllNotes,
 };
 const connector = connect(
   mapStateToProps,
