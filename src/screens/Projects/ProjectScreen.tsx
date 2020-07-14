@@ -9,6 +9,7 @@ import {
   Platform,
   TouchableOpacity,
   Button,
+  FlatList,
 } from 'react-native';
 import {RootState} from 'store';
 import {connect, ConnectedProps} from 'react-redux';
@@ -25,7 +26,7 @@ import {
   getAllNotes,
 } from 'store/actions/action';
 import ActivityIndicatorExample from 'components/ActivityIndicatorExample';
-import {FlatList} from 'react-native-gesture-handler';
+import projectReducer from 'store/reducers/projectReducer';
 
 if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -178,8 +179,9 @@ class ProjectScreen extends Component<Props, State, {}> {
             renderItem={({item, index}) => (
               <TouchableOpacity
                 onPress={() =>
-                  navigate('AddNotes', {
+                  navigate('ProjectNote', {
                     index,
+                    id,
                   })
                 }>
                 <ItemNote title={item.title} text={item.text} />
