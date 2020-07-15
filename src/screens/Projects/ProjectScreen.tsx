@@ -27,6 +27,7 @@ import {
 } from 'store/actions/action';
 import ActivityIndicatorExample from 'components/ActivityIndicatorExample';
 import projectReducer from 'store/reducers/projectReducer';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -123,6 +124,11 @@ class ProjectScreen extends Component<Props, State, {}> {
       addNoteShow: false,
     });
   }
+  closeShow() {
+    this.setState({
+      show: false,
+    });
+  }
 
   render() {
     const {navigate} = this.props.navigation;
@@ -139,8 +145,9 @@ class ProjectScreen extends Component<Props, State, {}> {
         <TouchableOpacity
           onPress={() => {
             this.setState({addNoteShow: true});
-          }}>
-          <Text>add</Text>
+          }}
+          style={style.addNoteButton}>
+          <Text style={style.addNoteButtonText}>add</Text>
         </TouchableOpacity>
         <Modal transparent={true} visible={this.state.addNoteShow}>
           <View style={{backgroundColor: ' #ff0000', flex: 1}}>
@@ -173,34 +180,43 @@ class ProjectScreen extends Component<Props, State, {}> {
             </View>
           </View>
         </Modal>
-        {this.props.project.projectNotes && (
-          <FlatList
-            data={this.props.project.projectNotes}
-            renderItem={({item, index}) => (
-              <TouchableOpacity
-                onPress={() =>
-                  navigate('ProjectNote', {
-                    index,
-                    id,
-                  })
-                }>
-                <ItemNote title={item.title} text={item.text} />
-              </TouchableOpacity>
-            )}
-            keyExtractor={(item, index) => index.toString()}
-          />
-        )}
+        <View style={style.topMiddleView}>
+          <Text>Projekt Anteckningar</Text>
+          {!!this.props.project.projectNotes && (
+            <SafeAreaView style={style.container}>
+              <FlatList
+                data={this.props.project.projectNotes}
+                renderItem={({item, index}) => (
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigate('ProjectNote', {
+                        index,
+                        id,
+                      })
+                    }>
+                    <ItemNote title={item.title} text={item.text} />
+                  </TouchableOpacity>
+                )}
+                keyExtractor={(item, index) => index.toString()}
+              />
+            </SafeAreaView>
+          )}
+        </View>
 
-        {this.props.project.workingDays && (
-          <FlatList
-            data={this.props.project.workingDays}
-            renderItem={({item}) => (
-              <Item date={item.date} hours={item.hours} />
-            )}
-            keyExtractor={item => item.date.toString() + item.hours}
-          />
-        )}
-        <View style={style.middleView} />
+        <View style={style.middleView}>
+          <Text>Arbetsdagar</Text>
+          {!!this.props.project.workingDays && (
+            <SafeAreaView style={style.container}>
+              <FlatList
+                data={this.props.project.workingDays}
+                renderItem={({item}) => (
+                  <Item date={item.date} hours={item.hours} />
+                )}
+                keyExtractor={item => item.date.toString() + item.hours}
+              />
+            </SafeAreaView>
+          )}
+        </View>
         <View style={style.bottomView}>
           <TouchableOpacity
             style={style.addButton}
@@ -220,6 +236,12 @@ class ProjectScreen extends Component<Props, State, {}> {
                 width: 300,
                 height: 400,
               }}>
+              <TouchableOpacity
+                onPress={() => {
+                  this.closeShow();
+                }}>
+                <Text>X</Text>
+              </TouchableOpacity>
               <Text style={style.headerTitle}>{name}</Text>
               <Text style={{fontSize: 22}}>Lägg till tid</Text>
               <TextInput
@@ -254,8 +276,9 @@ class ProjectScreen extends Component<Props, State, {}> {
               <TouchableOpacity
                 onPress={() => {
                   this.handleSubmitToFirebase();
-                }}>
-                <Text>ADD</Text>
+                }}
+                style={style.addSubmitButtonFireBase}>
+                <Text style={style.textAddButton}>ADD</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -302,11 +325,15 @@ const style = StyleSheet.create({
   container: {
     flex: 1,
   },
+  topMiddleView: {
+    flex: 0.8,
+  },
   middleView: {
-    flex: 2,
+    flex: 1.6,
   },
   bottomView: {
     flex: 0.4,
+    marginBottom: 10,
   },
   addButton: {
     width: 300,
@@ -315,6 +342,7 @@ const style = StyleSheet.create({
     borderRadius: 1,
     textAlign: 'center',
     backgroundColor: '#add8e6',
+    marginEnd: 10,
   },
   textAddButton: {
     textAlign: 'center',
@@ -349,6 +377,25 @@ const style = StyleSheet.create({
     marginHorizontal: 16,
     height: 60,
     width: 360,
+  },
+  addNoteButton: {
+    width: 60,
+    height: 40,
+    alignSelf: 'flex-end',
+    borderWidth: 2,
+    marginRight: 10,
+  },
+  addNoteButtonText: {
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: 'bold',
+    padding: 5,
+  },
+  addSubmitButtonFireBase: {
+    width: 60,
+    height: 40,
+    alignSelf: 'center',
+    borderWidth: 2,
   },
 });
 
