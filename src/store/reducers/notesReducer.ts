@@ -42,6 +42,7 @@ const notesReducer = (
         notes: [...state.notes, action.payload],
       };
   }
+
   return state;
 };
 

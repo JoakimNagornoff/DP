@@ -14,6 +14,10 @@ import {
   GET_ALL_NOTES,
   NotesActionType,
   SUBMIT_NEW_NOTE,
+  SUBMIT_EDIT_PROJECT_NOTE,
+  AUTH_LOGIN,
+  AUTH_LOGOUT,
+  LoginActionType,
 } from './types';
 import firestore from '@react-native-firebase/firestore';
 import auth, {firebase} from '@react-native-firebase/auth';
@@ -106,6 +110,7 @@ export const submitWorkingDay = (
       }),
   };
 };
+
 export const submitProjectNote = (
   id: string,
   title: string,
@@ -118,6 +123,31 @@ export const submitProjectNote = (
       .doc(id)
       .update({
         projectNotes: firestore.FieldValue.arrayUnion({
+          title,
+          text,
+        }),
+      })
+      .then(() => {
+        return {
+          id,
+          title,
+          text,
+        };
+      }),
+  };
+};
+export const submitEditProjectNote = (
+  id: string,
+  title: string,
+  text: string,
+): ProjectActionType => {
+  return {
+    type: SUBMIT_EDIT_PROJECT_NOTE,
+    payload: firestore()
+      .collection('Projects')
+      .doc(id)
+      .update({
+        proejctNotes: firestore.FieldValue.arrayUnion({
           title,
           text,
         }),
@@ -190,6 +220,43 @@ export const getAllNotes = (): NotesActionType => {
             ...notesData,
           };
         });
+      }),
+  };
+};
+
+export const AuthLogin = (
+  email: string,
+  password: string,
+  callback?: () => any,
+): LoginActionType => {
+  return {
+    type: AUTH_LOGIN,
+    payload: async () => {
+      const result = await auth().signInWithEmailAndPassword(email, password);
+      await result.user.updateProfile({displayName: email});
+      await firestore()
+        .collection('Users')
+        .doc(result.user.uid)
+        .set({email});
+      const userDoc = await (await firestore()
+        .collection('Users')
+        .doc(result.user.uid)
+        .get()).data();
+      if (callback) callback();
+      return {
+        uid: result.user.uid,
+        emai: result.user.email,
+      };
+    },
+  };
+};
+export const AuthLogout = (callback?: () => any): LoginActionType => {
+  return {
+    type: AUTH_LOGOUT,
+    payload: auth()
+      .signOut()
+      .then(() => {
+        if (callback) callback();
       }),
   };
 };

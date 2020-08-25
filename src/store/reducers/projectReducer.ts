@@ -11,6 +11,7 @@ import {
   ProjectActionType,
   ProjectState,
   SUBMIT_PROJECT_NOTE_FULFILLED,
+  SUBMIT_EDIT_PROJECT_NOTE_FULFILLED,
 } from '../actions/types';
 
 const initialState: ProjectState = {
@@ -100,7 +101,26 @@ const projectReducer = (
           return project;
         }),
       };
+    case SUBMIT_EDIT_PROJECT_NOTE_FULFILLED:
+      return {
+        ...state,
+        chooseNotesTitle: '',
+        chooseNotesText: '',
+        projects: state.projects.map(project => {
+          if (project.id === action.payload.id) {
+            return {
+              ...project,
+              projectNotes: [
+                ...(project.projectNotes ? project.projectNotes : []),
+                {title: action.payload.title, text: action.payload.text},
+              ],
+            };
+          }
+          return project;
+        }),
+      };
   }
+
   return state;
 };
 
