@@ -10,7 +10,7 @@ import {
 const initialState: NoteState = {
   title: '',
   text: '',
-
+  id: '',
   notes: [],
 };
 

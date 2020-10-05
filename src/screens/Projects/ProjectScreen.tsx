@@ -13,9 +13,7 @@ import {
 } from 'react-native';
 import {RootState} from 'store';
 import {connect, ConnectedProps} from 'react-redux';
-import firebase from '@react-native-firebase/app';
 
-import RNDateTimePicker from '@react-native-community/datetimepicker';
 import {
   AddProjectDate,
   AddProjectHours,
@@ -26,58 +24,22 @@ import {
   getAllNotes,
 } from 'store/actions/action';
 import ActivityIndicatorExample from 'components/ActivityIndicatorExample';
-import projectReducer from 'store/reducers/projectReducer';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import DatePickerModal from '@components/DatePickerModal/DatePickerModal';
+import formdateDate from 'components/DatePickerModal/components/formdateDate/formatDate';
+import shortenString from '@components/DatePickerModal/components/shortenString/shortenString';
+import BackButton from '@components/BackButton/BackButton';
 
-if (Platform.OS === 'android') {
-  if (UIManager.setLayoutAnimationEnabledExperimental) {
-    UIManager.setLayoutAnimationEnabledExperimental(true);
-  }
-}
-
-const TwentyDays = new Date(
-  new Date().getTime() + 24 * 60 * 60 * 1000 * 20,
-).toLocaleDateString();
-
-const TwentyDaysBack = new Date(
-  new Date().getTime() - 24 * 60 * 60 * 60 * 1000 * 20,
-).toLocaleDateString();
-
-function formatDate(date: string | Date | number) {
-  var d = new Date(date),
-    month = '' + (d.getMonth() + 1),
-    day = '' + d.getDate(),
-    year = d.getFullYear();
-
-  if (month.length < 2) month = '0' + month;
-  if (day.length < 2) day = '0' + day;
-
-  return [year, month, day].join('-');
-}
-
-function shortenString(text: string) {
-  const MAX_LENGTH = 50;
-  if (text.length <= MAX_LENGTH) {
-    return text;
-  }
-  return text.substring(0, MAX_LENGTH - 3) + '...';
-}
-
-interface State {
-  thisProject: any[];
-  show: boolean;
-  datepickerOpen: boolean;
-  addNoteShow: boolean;
-}
-
+//func Item WorkinDay
 function Item({date, hours}) {
   return (
     <View style={style.projectItem}>
-      <Text>{formatDate(date)}</Text>
+      <Text>{formdateDate(date)}</Text>
       <Text>{hours}</Text>
     </View>
   );
 }
+//func Item Project Note
 function ItemNote({title, text}) {
   return (
     <View style={style.projectItem}>
@@ -85,6 +47,12 @@ function ItemNote({title, text}) {
       <Text>{shortenString(text)}</Text>
     </View>
   );
+}
+interface State {
+  thisProject: [];
+  show: boolean;
+  datepickerOpen: boolean;
+  addNoteShow: boolean;
 }
 
 class ProjectScreen extends Component<Props, State, {}> {
@@ -97,13 +65,7 @@ class ProjectScreen extends Component<Props, State, {}> {
       addNoteShow: false,
     };
   }
-  _onChange = form => console.log(form);
-  setDate = (event, date) => {
-    this.setState({datepickerOpen: false});
-    if (date) {
-      this.props.AddProjectDate(formatDate(date));
-    }
-  };
+  //Submit WorkingDay method
   handleSubmitToFirebase() {
     this.props.submitWorkingDay(
       this.props.route.params.id,
@@ -114,6 +76,7 @@ class ProjectScreen extends Component<Props, State, {}> {
       show: false,
     });
   }
+  //Submit project note method
   handleSubmitProjectNoteFirebase() {
     this.props.submitProjectNote(
       this.props.route.params.id,
@@ -127,6 +90,11 @@ class ProjectScreen extends Component<Props, State, {}> {
   closeShow() {
     this.setState({
       show: false,
+    });
+  }
+  CloseNoteShow() {
+    this.setState({
+      addNoteShow: false,
     });
   }
 
@@ -159,6 +127,11 @@ class ProjectScreen extends Component<Props, State, {}> {
                 width: 300,
                 height: 400,
               }}>
+              <BackButton
+                onPress={() => {
+                  this.CloseNoteShow();
+                }}
+              />
               <Text style={style.headerTitle}>{name}</Text>
               <Text>Anteckningar</Text>
               <TextInput
@@ -236,12 +209,11 @@ class ProjectScreen extends Component<Props, State, {}> {
                 width: 300,
                 height: 400,
               }}>
-              <TouchableOpacity
+              <BackButton
                 onPress={() => {
                   this.closeShow();
-                }}>
-                <Text>X</Text>
-              </TouchableOpacity>
+                }}
+              />
               <Text style={style.headerTitle}>{name}</Text>
               <Text style={{fontSize: 22}}>Lägg till tid</Text>
               <TextInput
@@ -257,21 +229,7 @@ class ProjectScreen extends Component<Props, State, {}> {
                 }}
               />
 
-              {this.state.datepickerOpen && (
-                <RNDateTimePicker
-                  testID="dateTimePicker"
-                  timeZoneOffsetInMinutes={0}
-                  value={
-                    this.props.chooseDate
-                      ? new Date(this.props.chooseDate)
-                      : new Date()
-                  }
-                  maximumDate={new Date(TwentyDays)}
-                  minimumDate={new Date(TwentyDaysBack)}
-                  mode="date"
-                  onChange={this.setDate}
-                />
-              )}
+              {this.state.datepickerOpen && <DatePickerModal />}
 
               <TouchableOpacity
                 onPress={() => {

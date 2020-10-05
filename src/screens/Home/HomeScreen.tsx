@@ -19,11 +19,12 @@ import {
 } from 'store/actions/action';
 import firebase from '@react-native-firebase/app';
 import ActivityIndicatorExample from 'components/ActivityIndicatorExample';
+import BackButton from 'components/BackButton/BackButton';
 
 interface State {
   show: boolean;
 }
-
+//function Item Project
 function Item({name}) {
   return (
     <View style={style.projectItem}>
@@ -41,6 +42,7 @@ class HomeScreen extends Component<Props, State, {}> {
   }
   componentDidMount() {
     this.props.getAllProjects();
+    console.log(this.props.note.id);
   }
   onItemClicked() {
     this.props.navigation.navigate('Projects'), {};
@@ -48,6 +50,11 @@ class HomeScreen extends Component<Props, State, {}> {
 
   handleSubmitClick() {
     this.props.submitNewProject(this.props.store);
+    this.setState({
+      show: false,
+    });
+  }
+  closeShow() {
     this.setState({
       show: false,
     });
@@ -98,8 +105,13 @@ class HomeScreen extends Component<Props, State, {}> {
                 margin: 50,
                 padding: 40,
                 width: 300,
-                height: 200,
+                height: 350,
               }}>
+              <BackButton
+                onPress={() => {
+                  this.closeShow();
+                }}
+              />
               <Text style={{fontSize: 30}}>Lägg till Projekt</Text>
               <TextInput
                 style={style.input}
@@ -126,6 +138,7 @@ function mapStateToProps(state: RootState) {
     projectName: state.projectReducer.name,
     store: state,
     projects: state.projectReducer.projects,
+    note: state.notesReducer,
   };
 }
 const mapDispatchToProps = {

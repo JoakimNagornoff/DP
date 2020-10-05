@@ -26,9 +26,9 @@ class ProjectNote extends Component<Props, State, {}> {
   }
   handleEditable = () => this.setState({ editTitle: true })
   handleSubmitProjectNoteFirebase() {
-      console.log(this.props.route.params.id)
-      console.log(this.props.title)
-      console.log(this.props.text)
+      this.props.route.params.id,
+      this.props.title,
+    this.props.text
     
     }
 
