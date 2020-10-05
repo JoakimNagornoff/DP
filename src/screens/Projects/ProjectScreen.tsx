@@ -5,8 +5,6 @@ import {
   StyleSheet,
   Modal,
   TextInput,
-  UIManager,
-  Platform,
   TouchableOpacity,
   Button,
   FlatList,
@@ -18,9 +16,9 @@ import {
   AddProjectDate,
   AddProjectHours,
   submitWorkingDay,
-  AddProjectNoteTitle,
-  AddProjectNoteText,
-  submitProjectNote,
+  submitNewNote,
+  AddNotesText,
+  AddNotesTitle,
   getAllNotes,
 } from 'store/actions/action';
 import ActivityIndicatorExample from 'components/ActivityIndicatorExample';
@@ -29,6 +27,7 @@ import DatePickerModal from '@components/DatePickerModal/DatePickerModal';
 import formdateDate from 'components/DatePickerModal/components/formdateDate/formatDate';
 import shortenString from '@components/DatePickerModal/components/shortenString/shortenString';
 import BackButton from '@components/BackButton/BackButton';
+import {firebase} from '@react-native-firebase/firestore';
 
 //func Item WorkinDay
 function Item({date, hours}) {
@@ -50,6 +49,7 @@ function ItemNote({title, text}) {
 }
 interface State {
   thisProject: [];
+  thisProjectNotes: any[];
   show: boolean;
   datepickerOpen: boolean;
   addNoteShow: boolean;
@@ -60,11 +60,13 @@ class ProjectScreen extends Component<Props, State, {}> {
     super(props);
     this.state = {
       thisProject: [],
+      thisProjectNotes: [],
       show: false,
       datepickerOpen: false,
       addNoteShow: false,
     };
   }
+
   //Submit WorkingDay method
   handleSubmitToFirebase() {
     this.props.submitWorkingDay(
@@ -78,7 +80,7 @@ class ProjectScreen extends Component<Props, State, {}> {
   }
   //Submit project note method
   handleSubmitProjectNoteFirebase() {
-    this.props.submitProjectNote(
+    this.props.submitNewNote(
       this.props.route.params.id,
       this.props.title,
       this.props.text,
@@ -98,10 +100,33 @@ class ProjectScreen extends Component<Props, State, {}> {
     });
   }
 
+  getProjectNotes() {
+    firebase
+      .firestore()
+      .collection('ProjectNotes')
+      .where('projectId', '==', this.props.route.params.id)
+      .get()
+      .then(result => {
+        const thisProjectNotes = result.docs.map(doc => {
+          return {id: doc.id, ...doc.data()};
+        });
+        this.setState({
+          thisProjectNotes,
+        });
+      });
+  }
+  componentDidMount() {
+    this.getProjectNotes();
+  }
+  compontDidUpdate(penrevState) {
+    if (this.state.thisProjectNotes !== prevState.thisProjectNotes) {
+      this.getProjectNotes();
+    }
+  }
   render() {
     const {navigate} = this.props.navigation;
     if (!this.props.project) {
-      return <Text>No project lol</Text>;
+      return <Text>Error loading project</Text>;
     }
 
     const {name} = this.props.route.params;
@@ -137,12 +162,12 @@ class ProjectScreen extends Component<Props, State, {}> {
               <TextInput
                 style={style.input}
                 placeholder="Titel"
-                onChangeText={this.props.AddProjectNoteTitle}
+                onChangeText={this.props.AddNotesTitle}
               />
               <TextInput
                 style={style.input}
                 placeholder="Text"
-                onChangeText={this.props.AddProjectNoteText}
+                onChangeText={this.props.AddNotesText}
               />
               <TouchableOpacity
                 onPress={() => {
@@ -155,10 +180,10 @@ class ProjectScreen extends Component<Props, State, {}> {
         </Modal>
         <View style={style.topMiddleView}>
           <Text>Projekt Anteckningar</Text>
-          {!!this.props.project.projectNotes && (
+          {!!this.state.thisProjectNotes && (
             <SafeAreaView style={style.container}>
               <FlatList
-                data={this.props.project.projectNotes}
+                data={this.state.thisProjectNotes}
                 renderItem={({item, index}) => (
                   <TouchableOpacity
                     onPress={() =>
@@ -255,17 +280,18 @@ function mapStateToProps(state: RootState, props: OwnProps) {
     project: state.projectReducer.projects.find(
       project => project.id === props.route.params.id,
     ),
-    title: state.projectReducer.chooseNotesTitle,
-    text: state.projectReducer.chooseNotesText,
+    note: state.notesReducer.notes,
+    title: state.notesReducer.text,
+    text: state.notesReducer.title,
   };
 }
 const mapDispatchToProps = {
   AddProjectDate,
   submitWorkingDay,
   AddProjectHours,
-  AddProjectNoteTitle,
-  AddProjectNoteText,
-  submitProjectNote,
+  submitNewNote,
+  AddNotesText,
+  AddNotesTitle,
   getAllNotes,
 };
 const connector = connect(

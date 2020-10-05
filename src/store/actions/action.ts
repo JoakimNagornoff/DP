@@ -6,15 +6,11 @@ import {
   ProjectActionType,
   SUBMIT_NEW_PROJECT,
   SUBMIT_WORKING_DAY,
-  ADD_PROJECT_NOTE_TITLE,
-  ADD_PROJECT_NOTE_TEXT,
-  SUBMIT_PROJECT_NOTE,
   ADD_NOTES_TITLE,
   ADD_NOTES_TEXT,
   GET_ALL_NOTES,
   NotesActionType,
   SUBMIT_NEW_NOTE,
-  SUBMIT_EDIT_PROJECT_NOTE,
   AUTH_LOGIN,
   AUTH_LOGOUT,
   LoginActionType,
@@ -111,70 +107,6 @@ export const submitWorkingDay = (
   };
 };
 
-export const submitProjectNote = (
-  id: string,
-  title: string,
-  text: string,
-): ProjectActionType => {
-  return {
-    type: SUBMIT_PROJECT_NOTE,
-    payload: firestore()
-      .collection('Projects')
-      .doc(id)
-      .update({
-        projectNotes: firestore.FieldValue.arrayUnion({
-          title,
-          text,
-        }),
-      })
-      .then(() => {
-        return {
-          id,
-          title,
-          text,
-        };
-      }),
-  };
-};
-export const submitEditProjectNote = (
-  id: string,
-  title: string,
-  text: string,
-): ProjectActionType => {
-  return {
-    type: SUBMIT_EDIT_PROJECT_NOTE,
-    payload: firestore()
-      .collection('Projects')
-      .doc(id)
-      .update({
-        proejctNotes: firestore.FieldValue.arrayUnion({
-          title,
-          text,
-        }),
-      })
-      .then(() => {
-        return {
-          id,
-          title,
-          text,
-        };
-      }),
-  };
-};
-
-export const AddProjectNoteTitle = (title: string): ProjectActionType => {
-  return {
-    type: ADD_PROJECT_NOTE_TITLE,
-    payload: title,
-  };
-};
-export const AddProjectNoteText = (text: string): ProjectActionType => {
-  return {
-    type: ADD_PROJECT_NOTE_TEXT,
-    payload: text,
-  };
-};
-
 export const AddNotesTitle = (title: string): NotesActionType => {
   return {
     type: ADD_NOTES_TITLE,
@@ -187,21 +119,26 @@ export const AddNotesText = (text: string): NotesActionType => {
     payload: text,
   };
 };
-export const submitNewNote = (store: RootState): NotesActionType => {
-  const {notesReducer: notes} = store;
+export const submitNewNote = (
+  projectId: string,
+  title: string,
+  text: string,
+): NotesActionType => {
   return {
     type: SUBMIT_NEW_NOTE,
     payload: firestore()
-      .collection('Notes')
+      .collection('ProjectNotes')
       .add({
-        title: notes.title,
-        text: notes.text,
+        projectId: projectId,
+        title: title,
+        text: text,
       })
       .then(res => {
         return {
           id: res.id,
-          title: notes.title,
-          text: notes.text,
+          title,
+          text,
+          projectId,
         };
       }),
   };
@@ -210,7 +147,7 @@ export const getAllNotes = (): NotesActionType => {
   return {
     type: GET_ALL_NOTES,
     payload: firestore()
-      .collection('Notes')
+      .collection('ProjectNotes')
       .get()
       .then(res => {
         return res.docs.map(doc => {

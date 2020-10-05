@@ -1,74 +1,76 @@
-import React, { Component } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import React, {Component} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
 
-import { RootState } from 'store';
-import { connect, ConnectedProps } from 'react-redux';
-import {submitEditProjectNote, AddProjectNoteTitle,
-  AddProjectNoteText,} from 'store/actions/action';
-
+import {RootState} from 'store';
+import {connect, ConnectedProps} from 'react-redux';
+import {} from 'store/actions/action';
 
 interface State {
-  editTitle: boolean,
-  editText: boolean,
-  title: string,
-  text: string
+  editTitle: boolean;
+  editText: boolean;
+  title: string;
+  text: string;
 }
 
 class ProjectNote extends Component<Props, State, {}> {
   constructor(props: Props) {
-    super(props)
+    super(props);
     this.state = {
       editTitle: true,
       editText: false,
       title: '',
-      text: ''
-    }
+      text: '',
+    };
   }
-  handleEditable = () => this.setState({ editTitle: true })
+  handleEditable = () => this.setState({editTitle: true});
   handleSubmitProjectNoteFirebase() {
-      this.props.route.params.id,
-      this.props.title,
-    this.props.text
-    
-    }
+    this.props.route.params.id, this.props.title, this.props.text;
+  }
 
   render() {
-    const { note } = this.props;
+    const {note} = this.props;
+    const {id} = this.props.route.params;
+    const {text} = this.props.route.params;
 
     if (!note) {
       return (
         <View style={style.container}>
           <Text>hitta inte</Text>
-
         </View>
-      )
+      );
     }
-
+    {
+      console.log(id);
+      console.log(text);
+    }
     return (
       <View style={style.container}>
         <View style={style.titleView}>
-        <TextInput
-                style={style.input}
-                placeholder={this.props.note?.title}
-                onChangeText={this.props.AddProjectNoteTitle}
-              />
-              <TextInput
-                style={style.input}
-                placeholder={this.props.note?.text}
-                onChangeText={this.props.AddProjectNoteText}
-              />
-             
-  
+          <TextInput
+            style={style.input}
+            placeholder={this.props.title}
+            onChangeText={this.props.AddProjectNoteTitle}
+          />
+          <TextInput
+            style={style.input}
+            placeholder={this.props.text}
+            onChangeText={this.props.AddProjectNoteText}
+          />
         </View>
         <View style={style.buttonView}>
-        
-            <TouchableOpacity
-                onPress={() => {
-                  this.handleSubmitProjectNoteFirebase();
-                }}>
-                <Text>ADD</Text>
-              </TouchableOpacity>
-         </View>
+          <TouchableOpacity
+            onPress={() => {
+              this.handleSubmitProjectNoteFirebase();
+            }}>
+            <Text>ADD</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -76,18 +78,13 @@ class ProjectNote extends Component<Props, State, {}> {
 
 function mapStateToProps(state: RootState, props: OwnProps) {
   return {
-    note: state.projectReducer.projects.find(p => p.id === props.route.params.id)?.projectNotes[props.route.params.index],
-    title: state.projectReducer.chooseNotesTitle,
-    text: state.projectReducer.chooseNotesText,
+    // note: state.projectReducer.projects.find(p => p.id === props.route.params.id)?.projectNotes[props.route.params.index],
+    title: state.notesReducer.title,
+    text: state.notesReducer.text,
+    note: state.notesReducer.notes,
   };
 }
-const mapDispatchToProps = {
-  AddProjectNoteTitle,
-  AddProjectNoteText,
-  submitEditProjectNote
-  
-
-};
+const mapDispatchToProps = {};
 const connector = connect(
   mapStateToProps,
   mapDispatchToProps,
@@ -113,7 +110,7 @@ const style = StyleSheet.create({
   title: {
     fontSize: 20,
     marginTop: 5,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   input: {
     borderBottomColor: '#8A8F9E',

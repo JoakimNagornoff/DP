@@ -10,7 +10,7 @@ import {
 const initialState: NoteState = {
   title: '',
   text: '',
-  id: '',
+  projectId: '',
   notes: [],
 };
 
@@ -37,6 +37,7 @@ const notesReducer = (
     case SUBMIT_NEW_NOTE_FULFILLED:
       return {
         ...state,
+        projectId: '',
         title: '',
         text: '',
         notes: [...state.notes, action.payload],

@@ -42,7 +42,7 @@ class HomeScreen extends Component<Props, State, {}> {
   }
   componentDidMount() {
     this.props.getAllProjects();
-    console.log(this.props.note.id);
+    this.props.getAllNotes();
   }
   onItemClicked() {
     this.props.navigation.navigate('Projects'), {};
