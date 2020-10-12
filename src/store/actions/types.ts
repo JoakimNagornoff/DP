@@ -18,9 +18,11 @@ export const SUBMIT_WORKING_DAY_PENDING = 'SUBMIT_WORKING_DAY_PENDING';
 export const SUBMIT_WORKING_DAY_REJECTED = 'SUBMIT_WORKING_DAY_REJECTED';
 export const SUBMIT_WORKING_DAY_FULFILLED = 'SUBMIT_WORKING_DAY_FULFILLED';
 
-//add regular notes types & add to firebase
+//add project notes types & add to firebase
 export const ADD_NOTES_TITLE = 'ADD_NOTES_TITLE';
 export const ADD_NOTES_TEXT = 'ADD_NOTES_TEXT';
+export const EDIT_NOTES_TITLE = 'EDIT_NOTES_TITLE';
+export const EDIT_NOTES_TEXT = 'EDIT_NOTES_TEXT';
 export const GET_ALL_NOTES = 'GET_ALL_NOTES';
 export const GET_ALL_NOTES_FULFILLED = 'GET_ALL_NOTES_FULFILLED';
 export const GET_ALL_NOTES_PENDING = 'GET_ALL_NOTES_PENDING';
@@ -29,6 +31,10 @@ export const SUBMIT_NEW_NOTE = 'SUBMIT_NEW_NOTE';
 export const SUBMIT_NEW_NOTE_FULFILLED = 'SUBMIT_NEW_NOTE_FULFILLED';
 export const SUBMIT_NEW_NOTE_PENDING = 'SUBMIT_NEW_NOTE_PENDING';
 export const SUBMIT_NEW_NOTE_REJECTED = 'SUBMIT_NEW_NOTE_REJECTED';
+export const SUBMIT_NEW_EDIT_NOTE = 'SUBMIT_NEW_EDIT_NOTE';
+export const SUBMIT_NEW_EDIT_NOTE_FULFILLED = 'SUBMIT_NEW_EDIT_NOTE_FULFILLED';
+export const SUBMIT_NEW_EDIT_NOTE_PENDING = 'SUBMIT_NEW_EDIT_NOTE_PENDING';
+export const SUBMIT_NEW_EDIT_NOTE_REJECTED = 'SUBMIT_NEW_EDIT_NOTE_REJECTED';
 
 //login types
 export const AUTH_LOGIN = 'AUTH_LOGIN';
@@ -148,13 +154,16 @@ interface Note {
   projectId: string;
   title: string;
   text: string;
+  createdAt: string
+  id: string;
 }
 
 export interface NoteState {
   title: string;
   text: string;
   projectId: string;
-
+  id: string;
+  createdAt: string
   notes: Note[];
 }
 
@@ -164,6 +173,14 @@ interface AddNotesTitleAction {
 }
 interface AddNotesTextAction {
   type: typeof ADD_NOTES_TEXT;
+  payload: string;
+}
+interface EditNotesTitleAction {
+  type: typeof EDIT_NOTES_TITLE;
+  payload: string;
+}
+interface EditNotesTextAction {
+  type: typeof EDIT_NOTES_TEXT;
   payload: string;
 }
 interface GetAllNotesAction {
@@ -199,6 +216,22 @@ interface SubmitNewNoteRejectedAction {
   type: typeof SUBMIT_NEW_NOTE_REJECTED;
   payload: any;
 }
+interface SubmitNewEditNoteActon {
+  type: typeof SUBMIT_NEW_EDIT_NOTE;
+  payload: any;
+}
+interface SubmitNewEditNoteFulFilledAction {
+  type: typeof SUBMIT_NEW_EDIT_NOTE_FULFILLED;
+  payload: any;
+}
+interface SubmitNewEditNotePendingAction {
+  type: typeof SUBMIT_NEW_EDIT_NOTE_PENDING;
+  payload: any;
+}
+interface SubmitNewEditNoteRejectedAction {
+  type: typeof SUBMIT_NEW_EDIT_NOTE_REJECTED;
+  payload: any;
+}
 
 export type NotesActionType =
   | AddNotesTitleAction
@@ -210,7 +243,13 @@ export type NotesActionType =
   | SubmitNewNoteAction
   | SubmitNewNoteFulfilledAction
   | SubmitNewNotePendingAction
-  | SubmitNewNoteRejectedAction;
+  | SubmitNewNoteRejectedAction
+  | EditNotesTitleAction
+  | EditNotesTextAction
+  | SubmitNewEditNoteActon
+  | SubmitNewEditNoteFulFilledAction
+  | SubmitNewEditNotePendingAction
+  | SubmitNewEditNoteRejectedAction;
 
 export interface PersonState {
   uid: string;

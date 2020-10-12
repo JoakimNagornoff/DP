@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
   Button,
   FlatList,
+  Platform,
+  UIManager,
 } from 'react-native';
 import {RootState} from 'store';
 import {connect, ConnectedProps} from 'react-redux';
@@ -28,6 +30,15 @@ import formdateDate from 'components/DatePickerModal/components/formdateDate/for
 import shortenString from '@components/DatePickerModal/components/shortenString/shortenString';
 import BackButton from '@components/BackButton/BackButton';
 import {firebase} from '@react-native-firebase/firestore';
+import RNDateTimePicker from '@react-native-community/datetimepicker';
+import TwentyDays from '@components/DatePickerModal/components/TwentyDays'
+import TwentyDaysBack from '@components/DatePickerModal/components/TwentyDaysBack'
+
+if (Platform.OS === 'android') {
+  if (UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
+}
 
 //func Item WorkinDay
 function Item({date, hours}) {
@@ -50,6 +61,7 @@ function ItemNote({title, text}) {
 interface State {
   thisProject: [];
   thisProjectNotes: any[];
+  newProjectNotes: any[];
   show: boolean;
   datepickerOpen: boolean;
   addNoteShow: boolean;
@@ -61,11 +73,19 @@ class ProjectScreen extends Component<Props, State, {}> {
     this.state = {
       thisProject: [],
       thisProjectNotes: [],
+      newProjectNotes: [],
       show: false,
       datepickerOpen: false,
       addNoteShow: false,
     };
   }
+  _onChange = form => console.log(form);
+  setDate = (event, date) => {
+    this.setState({datepickerOpen: false});
+    if (!!date) {
+      this.props.AddProjectDate(formdateDate(date));
+    }
+  };
 
   //Submit WorkingDay method
   handleSubmitToFirebase() {
@@ -88,11 +108,13 @@ class ProjectScreen extends Component<Props, State, {}> {
     this.setState({
       addNoteShow: false,
     });
+    this.getProjectNotes();
   }
   closeShow() {
     this.setState({
       show: false,
     });
+    this.props.AddProjectDate('');
   }
   CloseNoteShow() {
     this.setState({
@@ -115,14 +137,13 @@ class ProjectScreen extends Component<Props, State, {}> {
         });
       });
   }
+
   componentDidMount() {
     this.getProjectNotes();
   }
-  compontDidUpdate(penrevState) {
-    if (this.state.thisProjectNotes !== prevState.thisProjectNotes) {
-      this.getProjectNotes();
-    }
-  }
+
+
+
   render() {
     const {navigate} = this.props.navigation;
     if (!this.props.project) {
@@ -131,7 +152,7 @@ class ProjectScreen extends Component<Props, State, {}> {
 
     const {name} = this.props.route.params;
     const {id} = this.props.route.params;
-
+    //console.log('render', this.state.thisProjectNotes.length);
     return (
       <View style={style.container}>
         <Text style={style.headerTitle}>{name}</Text>
@@ -188,8 +209,9 @@ class ProjectScreen extends Component<Props, State, {}> {
                   <TouchableOpacity
                     onPress={() =>
                       navigate('ProjectNote', {
-                        index,
-                        id,
+                        id: item.id,
+                        title: item.title,
+                        text: item.text,
                       })
                     }>
                     <ItemNote title={item.title} text={item.text} />
@@ -254,7 +276,19 @@ class ProjectScreen extends Component<Props, State, {}> {
                 }}
               />
 
-              {this.state.datepickerOpen && <DatePickerModal />}
+              {this.state.datepickerOpen && (
+                <RNDateTimePicker
+                testID="dateTimePicker"
+                timeZoneOffsetInMinutes={0}
+                value={
+                  this.props.chooseDate ? new Date(this.props.chooseDate) : new Date()
+                }
+                maximumDate={new Date(TwentyDays)}
+                minimumDate={new Date(TwentyDaysBack)}
+                mode="date"
+                onChange={this.setDate}
+              />
+              ) }
 
               <TouchableOpacity
                 onPress={() => {
@@ -266,6 +300,7 @@ class ProjectScreen extends Component<Props, State, {}> {
             </View>
           </View>
         </Modal>
+        <TouchableOpacity onPress={() => {console.log('avsluta')}}><Text>Avsuta project</Text></TouchableOpacity>
       </View>
     );
   }
@@ -283,6 +318,7 @@ function mapStateToProps(state: RootState, props: OwnProps) {
     note: state.notesReducer.notes,
     title: state.notesReducer.text,
     text: state.notesReducer.title,
+    createdAt: state.notesReducer.createdAt
   };
 }
 const mapDispatchToProps = {

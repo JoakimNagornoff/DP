@@ -9,13 +9,21 @@ import {
 
 import {RootState} from 'store';
 import {connect, ConnectedProps} from 'react-redux';
-import {} from 'store/actions/action';
+import {
+  submitNewEditNote,
+  EditNotesTitle,
+  AddNotesText,
+  getAllNotes
+} from 'store/actions/action';
+import {firebase} from '@react-native-firebase/firestore';
 
 interface State {
   editTitle: boolean;
   editText: boolean;
   title: string;
+  editedProjectNote: any[];
   text: string;
+  id: string
 }
 
 class ProjectNote extends Component<Props, State, {}> {
@@ -24,43 +32,51 @@ class ProjectNote extends Component<Props, State, {}> {
     this.state = {
       editTitle: true,
       editText: false,
-      title: '',
-      text: '',
+      editedProjectNote: [],
+      title: props.route.params.title,
+      text: props.route.params.text,
+      id: props.route.params.id
     };
   }
   handleEditable = () => this.setState({editTitle: true});
   handleSubmitProjectNoteFirebase() {
-    this.props.route.params.id, this.props.title, this.props.text;
+    const {id,title,text} = this.state
+    if(title!=='' && text!== ''){
+    this.props.submitNewEditNote(
+      id,
+     title,
+      text
+    )
+    }
+   
+    this.props.navigation.goBack()
+
   }
 
   render() {
-    const {note} = this.props;
+    const {noted} = this.props;
     const {id} = this.props.route.params;
-    const {text} = this.props.route.params;
-
-    if (!note) {
+    if (!noted) {
       return (
         <View style={style.container}>
           <Text>hitta inte</Text>
         </View>
       );
     }
-    {
-      console.log(id);
-      console.log(text);
-    }
     return (
       <View style={style.container}>
         <View style={style.titleView}>
           <TextInput
             style={style.input}
-            placeholder={this.props.title}
-            onChangeText={this.props.AddProjectNoteTitle}
+            placeholder={this.state.title}
+            value={this.state.title}
+            onChangeText={(title)=>{this.setState({title:title})}}
           />
           <TextInput
             style={style.input}
-            placeholder={this.props.text}
-            onChangeText={this.props.AddProjectNoteText}
+            placeholder={this.state.text}
+            value={this.state.text}
+            onChangeText={(text)=>{this.setState({text:text})}}
           />
         </View>
         <View style={style.buttonView}>
@@ -78,13 +94,21 @@ class ProjectNote extends Component<Props, State, {}> {
 
 function mapStateToProps(state: RootState, props: OwnProps) {
   return {
-    // note: state.projectReducer.projects.find(p => p.id === props.route.params.id)?.projectNotes[props.route.params.index],
-    title: state.notesReducer.title,
-    text: state.notesReducer.text,
-    note: state.notesReducer.notes,
+    //note: state.projectReducer.projects.find(p => p.id === props.route.params.id)?.projectNotes[props.route.params.index],
+    noted: state.notesReducer.notes.find(n => n.id === props.route.params.id),
+    title: state.notesReducer.notes.find(n => n.id === props.route.params.id)?.title,
+    text: state.notesReducer.notes.find(n => n.id === props.route.params.id)?.text,
+    submitTitle: state.notesReducer.title,
+    submitText: state.notesReducer.text
   };
 }
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+  submitNewEditNote,
+  EditNotesTitle,
+  AddNotesText,
+  getAllNotes
+
+};
 const connector = connect(
   mapStateToProps,
   mapDispatchToProps,

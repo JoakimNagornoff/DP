@@ -14,10 +14,13 @@ import {
   AUTH_LOGIN,
   AUTH_LOGOUT,
   LoginActionType,
+  SUBMIT_NEW_EDIT_NOTE,
+  EDIT_NOTES_TITLE,
 } from './types';
 import firestore from '@react-native-firebase/firestore';
 import auth, {firebase} from '@react-native-firebase/auth';
 import {RootState} from 'store';
+import ProjectNote from 'screens/ProjectNote';
 
 export const AddProjectName = (name: string): ProjectActionType => {
   return {
@@ -95,6 +98,7 @@ export const submitWorkingDay = (
         workingDays: firestore.FieldValue.arrayUnion({
           date: new Date(date),
           hours,
+          name: firebase.auth().currentUser?.displayName
         }),
       })
       .then(() => {
@@ -119,10 +123,17 @@ export const AddNotesText = (text: string): NotesActionType => {
     payload: text,
   };
 };
+export const EditNotesTitle = (title: string): NotesActionType => {
+  return {
+    type: EDIT_NOTES_TITLE,
+    payload: title,
+  };
+};
 export const submitNewNote = (
   projectId: string,
   title: string,
   text: string,
+
 ): NotesActionType => {
   return {
     type: SUBMIT_NEW_NOTE,
@@ -132,6 +143,7 @@ export const submitNewNote = (
         projectId: projectId,
         title: title,
         text: text,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       })
       .then(res => {
         return {
@@ -139,6 +151,33 @@ export const submitNewNote = (
           title,
           text,
           projectId,
+        };
+      }),
+  };
+};
+
+
+export const submitNewEditNote = (
+  id: string,
+  title: string,
+  text: string,
+): NotesActionType => {
+  return {
+    type: SUBMIT_NEW_EDIT_NOTE,
+    payload: firestore()
+      .collection('ProjectNotes')
+      .doc(id)
+      .update({
+        title,
+        text,
+        id,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      })
+      .then(() => {
+        return {
+          title,
+          text,
+          id,
         };
       }),
   };

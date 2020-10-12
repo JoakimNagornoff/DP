@@ -8,19 +8,26 @@ import ViewNotes from './screens/ViewNotes/ViewNotes';
 import AddNotes from './screens/AddNotes/AddNotes';
 import ProjectNote from './screens/ProjectNote/ProjectNote';
 import LoginScreen from './screens/LoginScreen/loginScreen';
+import EndsProjectScreen from './screens/EndsProjects/EndsProjects'
 import rootReducer from './store/index';
 import {Provider} from 'react-redux';
 import {createStore, applyMiddleware} from 'redux';
 import promise from 'redux-promise-middleware';
+import EndsProjects from './screens/EndsProjects/EndsProjects';
+
+
 
 interface RoutesProps {}
 const Stack = createStackNavigator();
 const store = createStore(rootReducer, applyMiddleware(promise));
 
+
 store.subscribe(() => {
   console.log('store state:');
   console.log(JSON.stringify(store.getState()));
 });
+
+
 
 export const Routes: React.FC<RoutesProps> = ({}) => {
   return (
@@ -38,3 +45,4 @@ export const Routes: React.FC<RoutesProps> = ({}) => {
     </Provider>
   );
 };
+

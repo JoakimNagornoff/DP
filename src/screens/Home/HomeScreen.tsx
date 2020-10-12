@@ -20,9 +20,12 @@ import {
 import firebase from '@react-native-firebase/app';
 import ActivityIndicatorExample from 'components/ActivityIndicatorExample';
 import BackButton from 'components/BackButton/BackButton';
+import EndProjectList from '@components/EndProjectList/EndProjectList'
 
 interface State {
   show: boolean;
+  visibleEndProjects:boolean
+  visibleProjects: boolean
 }
 //function Item Project
 function Item({name}) {
@@ -38,6 +41,8 @@ class HomeScreen extends Component<Props, State, {}> {
     super(props);
     this.state = {
       show: false,
+      visibleEndProjects: false,
+      visibleProjects: true
     };
   }
   componentDidMount() {
@@ -59,43 +64,53 @@ class HomeScreen extends Component<Props, State, {}> {
       show: false,
     });
   }
+  visibleEndProjects = () => {
+    this.setState(({ visibleEndProjects }) => ({ visibleEndProjects: !visibleEndProjects }));
+    this.setState(({visibleProjects}) => ({visibleProjects: !visibleProjects}))
+  };
+  visibleProjects = () => {
+    this.setState(({ visibleEndProjects }) => ({ visibleEndProjects: !visibleEndProjects }));
+    this.setState(({visibleProjects}) => ({visibleProjects: !visibleProjects}))
+  }
 
   render() {
     const {navigate} = this.props.navigation;
-
     return (
       <View style={style.container}>
-        <TouchableOpacity
-          style={style.notesSceenButton}
-          onPress={() => {
-            navigate('Notes');
-          }}>
-          <Text>Anteckningar</Text>
-        </TouchableOpacity>
-
-        <Text>Projekt</Text>
-        <FlatList
-          data={this.props.projects}
-          renderItem={({item}) => (
-            <TouchableOpacity
-              onPress={() =>
-                navigate('Projects', {
-                  id: item.id,
-                  name: item.name,
-                })
-              }>
-              <Item name={item.name} />
-            </TouchableOpacity>
-          )}
-          keyExtractor={item => item.id}
-        />
-
-        <Button
-          title="show"
-          onPress={() => {
-            this.setState({show: true});
-          }}
-        />
+        <View style={style.topButtons}>
+          <TouchableOpacity onPress={this.visibleProjects}><Text>Projekt</Text></TouchableOpacity>
+        <TouchableOpacity onPress={this.visibleEndProjects}><Text>Avslutade Project</Text></TouchableOpacity>
+        </View>
+        {!!this.state.visibleEndProjects && <EndProjectList  /> }
+        {this.state.visibleProjects && (
+       <FlatList
+       data={this.props.projects}
+       renderItem={({item}) => (
+         <TouchableOpacity
+           onPress={() =>
+             navigate('Projects', {
+               id: item.id,
+               name: item.name,
+             })
+           }>
+           <Item name={item.name} />
+         </TouchableOpacity>
+       )}
+       keyExtractor={item => item.id}
+     />
+     
+           
+        )}
+        {this.state.visibleProjects && (
+           <Button
+           title="show"
+           onPress={() => {
+             this.setState({show: true});
+           }}
+         />
+        )}
+   
+       
 
         <Modal transparent={true} visible={this.state.show}>
           <View style={{backgroundColor: '#000000aa', flex: 1}}>
@@ -128,10 +143,16 @@ class HomeScreen extends Component<Props, State, {}> {
             </View>
           </View>
         </Modal>
-      </View>
+        </View>
+
+        
+       
+
     );
   }
 }
+
+
 
 function mapStateToProps(state: RootState) {
   return {
@@ -184,6 +205,9 @@ const style = StyleSheet.create({
     alignSelf: 'center',
     backgroundColor: '#5bb1cd',
   },
+  topButtons: {
+    flexDirection: 'row'
+  }
 });
 
 export default connector(HomeScreen);
