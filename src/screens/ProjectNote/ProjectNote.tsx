@@ -7,15 +7,11 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import {RootState} from 'store';
+import {ApplicationState} from 'store';
 import {connect, ConnectedProps} from 'react-redux';
 import {
-  submitNewEditNote,
-  EditNotesTitle,
-  AddNotesText,
-  getAllNotes
-} from 'store/actions/action';
-import {firebase} from '@react-native-firebase/firestore';
+updateProjectNote
+} from 'store/actions/ProjectNotes/action';
 
 interface State {
   editTitle: boolean;
@@ -41,11 +37,12 @@ class ProjectNote extends Component<Props, State, {}> {
   handleEditable = () => this.setState({editTitle: true});
   handleSubmitProjectNoteFirebase() {
     const {id,title,text} = this.state
+    console.log(id)
     if(title!=='' && text!== ''){
-    this.props.submitNewEditNote(
-      id,
-     title,
-      text
+    this.props.updateProjectNote(
+      {id},
+     {title},
+      {text}
     )
     }
    
@@ -54,15 +51,16 @@ class ProjectNote extends Component<Props, State, {}> {
   }
 
   render() {
-    const {noted} = this.props;
+    const {note} = this.props;
     const {id} = this.props.route.params;
-    if (!noted) {
+    if (!note) {
       return (
         <View style={style.container}>
           <Text>hitta inte</Text>
         </View>
-      );
+     );
     }
+    console.log(this.props.note)
     return (
       <View style={style.container}>
         <View style={style.titleView}>
@@ -92,21 +90,14 @@ class ProjectNote extends Component<Props, State, {}> {
   }
 }
 
-function mapStateToProps(state: RootState, props: OwnProps) {
+function mapStateToProps(state: ApplicationState, props: OwnProps) {
   return {
     //note: state.projectReducer.projects.find(p => p.id === props.route.params.id)?.projectNotes[props.route.params.index],
-    noted: state.notesReducer.notes.find(n => n.id === props.route.params.id),
-    title: state.notesReducer.notes.find(n => n.id === props.route.params.id)?.title,
-    text: state.notesReducer.notes.find(n => n.id === props.route.params.id)?.text,
-    submitTitle: state.notesReducer.title,
-    submitText: state.notesReducer.text
+    note: state.projectNote.data
   };
 }
 const mapDispatchToProps = {
-  submitNewEditNote,
-  EditNotesTitle,
-  AddNotesText,
-  getAllNotes
+  updateProjectNote
 
 };
 const connector = connect(

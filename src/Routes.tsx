@@ -1,25 +1,34 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
+import {Provider} from 'react-redux';
+import {createStore, applyMiddleware} from 'redux';
+import createSagaMidleware, { runSaga } from 'redux-saga'
+import rootSaga from './store/sagas'
 
+//screens
 import HomeScreen from './screens/Home/HomeScreen';
 import ProjectScreen from './screens/Projects/ProjectScreen';
 import ViewNotes from './screens/ViewNotes/ViewNotes';
 import AddNotes from './screens/AddNotes/AddNotes';
 import ProjectNote from './screens/ProjectNote/ProjectNote';
 import LoginScreen from './screens/LoginScreen/loginScreen';
-import EndsProjectScreen from './screens/EndsProjects/EndsProjects'
 import rootReducer from './store/index';
-import {Provider} from 'react-redux';
-import {createStore, applyMiddleware} from 'redux';
-import promise from 'redux-promise-middleware';
-import EndsProjects from './screens/EndsProjects/EndsProjects';
+
 
 
 
 interface RoutesProps {}
 const Stack = createStackNavigator();
-const store = createStore(rootReducer, applyMiddleware(promise));
+
+const sagaMiddleware = createSagaMidleware();
+const middleWare = [sagaMiddleware];
+
+const store = createStore(
+  rootReducer,
+  applyMiddleware(...middleWare)
+)
+sagaMiddleware.run(rootSaga);
 
 
 store.subscribe(() => {
@@ -45,4 +54,3 @@ export const Routes: React.FC<RoutesProps> = ({}) => {
     </Provider>
   );
 };
-

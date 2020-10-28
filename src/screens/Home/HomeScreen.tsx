@@ -10,108 +10,103 @@ import {
   FlatList,
 } from 'react-native';
 import {connect, ConnectedProps} from 'react-redux';
-import {RootState} from '/store/index';
+import {ApplicationState} from '/store/index';
 import {
-  AddProjectName,
-  getAllProjects,
-  submitNewProject,
-  getAllNotes,
-} from 'store/actions/action';
-import firebase from '@react-native-firebase/app';
+  requestApiProjectData,
+  AddNewProject, 
+  requestApiProjectDataWithId
+} from 'store/actions/Project/action';
+import {
+  requestApiProjectNoteData
+} from 'store/actions/ProjectNotes/action'
 import ActivityIndicatorExample from 'components/ActivityIndicatorExample';
 import BackButton from 'components/BackButton/BackButton';
-import EndProjectList from '@components/EndProjectList/EndProjectList'
+import ProjectList from '@components/ProjectList/ProjectList'
+import firestore from '@react-native-firebase/firestore';
+
 
 interface State {
   show: boolean;
-  visibleEndProjects:boolean
-  visibleProjects: boolean
-}
-//function Item Project
-function Item({name}) {
-  return (
-    <View style={style.projectItem}>
-      <Text>{name}</Text>
-    </View>
-  );
+  name: string;
+  test: boolean
+
 }
 
 class HomeScreen extends Component<Props, State, {}> {
+  unsubscribe: void;
   constructor(props: Props) {
     super(props);
     this.state = {
       show: false,
-      visibleEndProjects: false,
-      visibleProjects: true
+      name: '',
+      test: false
     };
   }
   componentDidMount() {
-    this.props.getAllProjects();
-    this.props.getAllNotes();
+    this.props.requestApiProjectData()
+    this.firebaseTest()
   }
+
+ 
   onItemClicked() {
     this.props.navigation.navigate('Projects'), {};
   }
+  
+  openModal () {
+    this.setState({show: true})
+  }
+  closeModal () {
+    this.setState({show: false})
+  }
+  create() {
+    const {name, show} = this.state
+   this.props.AddNewProject({name})
+   this.setState({show: false})
 
-  handleSubmitClick() {
-    this.props.submitNewProject(this.props.store);
-    this.setState({
-      show: false,
-    });
   }
-  closeShow() {
-    this.setState({
-      show: false,
-    });
+   firebaseTest ()  {
+     let addedId = ''
+   firestore().collection('Projects')
+  .onSnapshot(querySnapshot => {
+    querySnapshot.docChanges().forEach(change => {
+      if (change.type === 'added') {
+        if(change.doc.exists){
+          addedId = ''
+        }
+        else {
+          console.log('new Project: ', change.doc.id)
+          addedId = change.doc.id
+        }  
+      }
+      if(change.type === 'modified') {
+        if(change.doc.exists){
+          addedId = ''
+        } else {
+          console.log('Project modifed' , change.doc.data());
+          addedId = change.doc.id
+        }
+      }
+      if(change.type ==='removed'){
+        console.log('Removed Project: ', change.doc.data());
+          
+      }
+    })
+    const id = addedId
+    console.log(id)
+    this.props.requestApiProjectDataWithId({id})
+  });
+  
   }
-  visibleEndProjects = () => {
-    this.setState(({ visibleEndProjects }) => ({ visibleEndProjects: !visibleEndProjects }));
-    this.setState(({visibleProjects}) => ({visibleProjects: !visibleProjects}))
-  };
-  visibleProjects = () => {
-    this.setState(({ visibleEndProjects }) => ({ visibleEndProjects: !visibleEndProjects }));
-    this.setState(({visibleProjects}) => ({visibleProjects: !visibleProjects}))
-  }
-
   render() {
     const {navigate} = this.props.navigation;
+  
     return (
       <View style={style.container}>
-        <View style={style.topButtons}>
-          <TouchableOpacity onPress={this.visibleProjects}><Text>Projekt</Text></TouchableOpacity>
-        <TouchableOpacity onPress={this.visibleEndProjects}><Text>Avslutade Project</Text></TouchableOpacity>
-        </View>
-        {!!this.state.visibleEndProjects && <EndProjectList  /> }
-        {this.state.visibleProjects && (
-       <FlatList
-       data={this.props.projects}
-       renderItem={({item}) => (
-         <TouchableOpacity
-           onPress={() =>
-             navigate('Projects', {
-               id: item.id,
-               name: item.name,
-             })
-           }>
-           <Item name={item.name} />
-         </TouchableOpacity>
-       )}
-       keyExtractor={item => item.id}
-     />
-     
-           
+        {this.props.loading && (
+          <Text>loading</Text>
         )}
-        {this.state.visibleProjects && (
-           <Button
-           title="show"
-           onPress={() => {
-             this.setState({show: true});
-           }}
-         />
-        )}
-   
-       
-
+      
+       <ProjectList navigation={this.props.navigation}></ProjectList>
         <Modal transparent={true} visible={this.state.show}>
           <View style={{backgroundColor: '#000000aa', flex: 1}}>
             <View
@@ -124,25 +119,29 @@ class HomeScreen extends Component<Props, State, {}> {
               }}>
               <BackButton
                 onPress={() => {
-                  this.closeShow();
+                  this.closeModal();
                 }}
               />
               <Text style={{fontSize: 30}}>Lägg till Projekt</Text>
               <TextInput
                 style={style.input}
                 placeholder="Projekt"
-                onChangeText={this.props.AddProjectName}
-                value={this.props.projectName}
+                value={this.state.name}
+                onChangeText={(text) => this.setState({ name: text })}
               />
               <TouchableOpacity
                 onPress={() => {
-                  this.handleSubmitClick();
+                 this.create()
                 }}>
                 <Text>Lägg till</Text>
               </TouchableOpacity>
             </View>
           </View>
         </Modal>
+        <View style={style.middleContainer}></View>
+        <View style={style.bottomContainer}>
+        <TouchableOpacity  style={style.notesSceenButton} onPress={() => {this.openModal()}}><Text>TEST</Text></TouchableOpacity>
+        </View>
         </View>
 
         
@@ -154,19 +153,18 @@ class HomeScreen extends Component<Props, State, {}> {
 
 
 
-function mapStateToProps(state: RootState) {
+function mapStateToProps(state: ApplicationState) {
   return {
-    projectName: state.projectReducer.name,
     store: state,
-    projects: state.projectReducer.projects,
-    note: state.notesReducer,
+    loading: state.project.loading,
+    project: state.project.data,
   };
 }
 const mapDispatchToProps = {
-  AddProjectName,
-  getAllProjects,
-  submitNewProject,
-  getAllNotes,
+  requestApiProjectData,
+  AddNewProject,
+  requestApiProjectNoteData,
+  requestApiProjectDataWithId
 };
 
 const connector = connect(
@@ -183,6 +181,15 @@ const style = StyleSheet.create({
   container: {
     flex: 1,
   },
+  middleContainer: {
+    flex: 1.5,
+
+  },
+  bottomContainer: {
+    flex: 0.2,
+
+  },
+  
   input: {
     borderBottomColor: '#8A8F9E',
     borderBottomWidth: StyleSheet.hairlineWidth,

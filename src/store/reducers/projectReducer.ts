@@ -1,73 +1,100 @@
 import {
-  ADD_PROJECT_NAME,
   ADD_PROJECT_DATE,
   ADD_PROJECT_HOURS,
-  GET_ALL_PROJECTS_FULFILLED,
-  SUBMIT_NEW_PROJECT_FULFILLED,
-  SUBMIT_WORKING_DAY_FULFILLED,
   ProjectActionType,
   ProjectState,
-} from '../actions/types';
+  RECIEVE_API_PROJECT_DATA,
+  REQUEST_API_PROJECT_DATA,
+  REQUEST_API_UPDATE_PROJECT,
+  RECIEVE_API_UPDATE_PROJECT,
+  FIREBASE_LISTEN_REQUESTED,
+  FIREBASE_LISTEN_FULFILLED,
+  REQUEST_API_PROJECT_DATA_WITH_ID,
+  RECIEVE_API_PROJECT_DATA_WITH_ID
+} from '../actions/Project/types';
 
 const initialState: ProjectState = {
-  name: '',
+  data: [],
+  loading: false,
+  error: '',
   chooseDate: '',
   chooseHours: 0,
-  projects: [],
 };
-
 const projectReducer = (
   state = initialState,
   action: ProjectActionType,
 ): ProjectState => {
   switch (action.type) {
-    case ADD_PROJECT_NAME:
+    case REQUEST_API_PROJECT_DATA:
       return {
         ...state,
-        name: action.payload,
-      };
-    case ADD_PROJECT_DATE:
-      return {
-        ...state,
-        chooseDate: action.payload,
-      };
-    case ADD_PROJECT_HOURS:
-      return {
-        ...state,
-        chooseHours: action.payload,
-      };
-    case GET_ALL_PROJECTS_FULFILLED:
-      return {
-        ...state,
-        projects: action.payload,
-      };
-    case SUBMIT_NEW_PROJECT_FULFILLED:
-      return {
-        ...state,
-        name: '',
-        projects: [...state.projects, action.payload],
-      };
-    case SUBMIT_WORKING_DAY_FULFILLED:
-      return {
-        ...state,
-        chooseDate: '',
-        chooseHours: 0,
-        projects: state.projects.map(project => {
-          if (project.id === action.payload.id) {
-            return {
-              ...project,
-              workingDays: [
-                ...(project.workingDays ? project.workingDays : []),
-                {date: action.payload.date, hours: action.payload.hours},
-              ],
-            };
+        loading: true,
+      }
+      case RECIEVE_API_PROJECT_DATA: {
+        return {
+          ...state,
+          loading: false, 
+          data: action.payload
+        }
+      }
+        case RECIEVE_API_PROJECT_DATA: {
+          return {
+            ...state,
+            loading: false,
+            error: 'error',
+            
           }
-          return project;
-        }),
-      };
+        }
+        case REQUEST_API_PROJECT_DATA_WITH_ID: {
+          return {
+            ...state,
+            loading: true
+          }
+        }
+        case RECIEVE_API_PROJECT_DATA_WITH_ID: {
+          return {
+            ...state,
+            loading: false,
+            data: [...action.payload]
+          }
+        }
+        case REQUEST_API_UPDATE_PROJECT: {
+        return {
+          ...state,
+          chooseDate: '',
+          chooseHours: 0, 
+        }
+      }
+        case ADD_PROJECT_DATE: {
+          return {
+            ...state,
+            chooseDate: action.payload
+          }
+        }
+          case ADD_PROJECT_HOURS: {
+            return {
+              ...state,
+              chooseHours: action.payload
+            }
+          }
+            case RECIEVE_API_UPDATE_PROJECT: {
+              return {
+                ...state,
+                data: action.payload,
+              }
+            }
+            case FIREBASE_LISTEN_REQUESTED: {
+              return {
+                ...state,
+                loading: true
+              }
+            }
+  
+           
+
   }
+   
 
   return state;
-};
-
+}
 export default projectReducer;

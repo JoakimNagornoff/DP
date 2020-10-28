@@ -15,24 +15,18 @@ import {RootState} from 'store';
 import {connect, ConnectedProps} from 'react-redux';
 
 import {
-  AddProjectDate,
-  AddProjectHours,
-  submitWorkingDay,
-  submitNewNote,
-  AddNotesText,
-  AddNotesTitle,
-  getAllNotes,
-} from 'store/actions/action';
+  AddNewProjectNote
+} from 'store/actions/ProjectNotes/action'
+import {updateProject, AddProjectHours, AddProjectDate} from 'store/actions/Project/action'
 import ActivityIndicatorExample from 'components/ActivityIndicatorExample';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import DatePickerModal from '@components/DatePickerModal/DatePickerModal';
 import formdateDate from 'components/DatePickerModal/components/formdateDate/formatDate';
-import shortenString from '@components/DatePickerModal/components/shortenString/shortenString';
+import ProjectNotes from '@components/ProjectNoteCard/ProjectNotes'
+
 import BackButton from '@components/BackButton/BackButton';
-import {firebase} from '@react-native-firebase/firestore';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
-import TwentyDays from '@components/DatePickerModal/components/TwentyDays'
-import TwentyDaysBack from '@components/DatePickerModal/components/TwentyDaysBack'
+import TwentyDays from 'components/DatePickerModal/components/TwentyDays/TwentyDays';
+import TwentyDaysBack from 'components/DatePickerModal/components/TwentyDaysBack/TwentyDaysBack';
+import WorkindayList from '@components/WorkinDayList/WorkinDayList'
 
 if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -40,31 +34,17 @@ if (Platform.OS === 'android') {
   }
 }
 
-//func Item WorkinDay
-function Item({date, hours}) {
-  return (
-    <View style={style.projectItem}>
-      <Text>{formdateDate(date)}</Text>
-      <Text>{hours}</Text>
-    </View>
-  );
-}
-//func Item Project Note
-function ItemNote({title, text}) {
-  return (
-    <View style={style.projectItem}>
-      <Text>{title}</Text>
-      <Text>{shortenString(text)}</Text>
-    </View>
-  );
-}
+
 interface State {
   thisProject: [];
   thisProjectNotes: any[];
-  newProjectNotes: any[];
   show: boolean;
   datepickerOpen: boolean;
   addNoteShow: boolean;
+  test: string;
+  title: string;
+  text: string;
+
 }
 
 class ProjectScreen extends Component<Props, State, {}> {
@@ -73,171 +53,86 @@ class ProjectScreen extends Component<Props, State, {}> {
     this.state = {
       thisProject: [],
       thisProjectNotes: [],
-      newProjectNotes: [],
       show: false,
       datepickerOpen: false,
       addNoteShow: false,
+      test: '',
+      title: '',
+      text: '',
+      
+
     };
   }
   _onChange = form => console.log(form);
   setDate = (event, date) => {
     this.setState({datepickerOpen: false});
     if (!!date) {
-      this.props.AddProjectDate(formdateDate(date));
+     // this.props.Add(formdateDate({chooseDate}))
+    this.props.AddProjectDate(formdateDate(date))
+    //console.log(formdateDate(date))
+ 
+     
     }
   };
 
   //Submit WorkingDay method
-  handleSubmitToFirebase() {
-    this.props.submitWorkingDay(
-      this.props.route.params.id,
-      this.props.date,
-      this.props.hours,
-    );
-    this.setState({
-      show: false,
-    });
-  }
+
   //Submit project note method
-  handleSubmitProjectNoteFirebase() {
-    this.props.submitNewNote(
-      this.props.route.params.id,
-      this.props.title,
-      this.props.text,
-    );
+  openDatePicker () {
     this.setState({
-      addNoteShow: false,
-    });
-    this.getProjectNotes();
+      datepickerOpen: true
+    })
   }
+ 
+
   closeShow() {
     this.setState({
       show: false,
     });
-    this.props.AddProjectDate('');
+
   }
   CloseNoteShow() {
     this.setState({
       addNoteShow: false,
     });
   }
-
-  getProjectNotes() {
-    firebase
-      .firestore()
-      .collection('ProjectNotes')
-      .where('projectId', '==', this.props.route.params.id)
-      .get()
-      .then(result => {
-        const thisProjectNotes = result.docs.map(doc => {
-          return {id: doc.id, ...doc.data()};
-        });
-        this.setState({
-          thisProjectNotes,
-        });
-      });
+  create() {
+    const {title, text} = this.state
+    const projectId = this.props.project?.id    
+    this.props.AddNewProjectNote({projectId},{title}, {text})
+    this.setState({addNoteShow: false})
   }
+  test() {
+    const {test} = this.state
+    const {date, hours} = this.props
+    const id = this.props.project?.id
+    this.props.updateProject({id},{hours},{date})
+    this.setState({show: false})
 
-  componentDidMount() {
-    this.getProjectNotes();
   }
-
-
 
   render() {
     const {navigate} = this.props.navigation;
     if (!this.props.project) {
       return <Text>Error loading project</Text>;
     }
-
-    const {name} = this.props.route.params;
-    const {id} = this.props.route.params;
-    //console.log('render', this.state.thisProjectNotes.length);
+    const {name, id} = this.props.route.params;
     return (
       <View style={style.container}>
-        <Text style={style.headerTitle}>{name}</Text>
-        <TouchableOpacity
-          onPress={() => {
-            this.setState({addNoteShow: true});
-          }}
-          style={style.addNoteButton}>
-          <Text style={style.addNoteButtonText}>add</Text>
-        </TouchableOpacity>
-        <Modal transparent={true} visible={this.state.addNoteShow}>
-          <View style={{backgroundColor: ' #ff0000', flex: 1}}>
-            <View
-              style={{
-                backgroundColor: '#ffffff',
-                margin: 50,
-                padding: 40,
-                width: 300,
-                height: 400,
-              }}>
-              <BackButton
-                onPress={() => {
-                  this.CloseNoteShow();
-                }}
-              />
-              <Text style={style.headerTitle}>{name}</Text>
-              <Text>Anteckningar</Text>
-              <TextInput
-                style={style.input}
-                placeholder="Titel"
-                onChangeText={this.props.AddNotesTitle}
-              />
-              <TextInput
-                style={style.input}
-                placeholder="Text"
-                onChangeText={this.props.AddNotesText}
-              />
-              <TouchableOpacity
-                onPress={() => {
-                  this.handleSubmitProjectNoteFirebase();
-                }}>
-                <Text>ADD</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
-        <View style={style.topMiddleView}>
-          <Text>Projekt Anteckningar</Text>
-          {!!this.state.thisProjectNotes && (
-            <SafeAreaView style={style.container}>
-              <FlatList
-                data={this.state.thisProjectNotes}
-                renderItem={({item, index}) => (
-                  <TouchableOpacity
-                    onPress={() =>
-                      navigate('ProjectNote', {
-                        id: item.id,
-                        title: item.title,
-                        text: item.text,
-                      })
-                    }>
-                    <ItemNote title={item.title} text={item.text} />
-                  </TouchableOpacity>
-                )}
-                keyExtractor={(item, index) => index.toString()}
-              />
-            </SafeAreaView>
-          )}
-        </View>
 
-        <View style={style.middleView}>
-          <Text>Arbetsdagar</Text>
-          {!!this.props.project.workingDays && (
-            <SafeAreaView style={style.container}>
-              <FlatList
-                data={this.props.project.workingDays}
-                renderItem={({item}) => (
-                  <Item date={item.date} hours={item.hours} />
-                )}
-                keyExtractor={item => item.date.toString() + item.hours}
-              />
-            </SafeAreaView>
-          )}
-        </View>
-        <View style={style.bottomView}>
+      <TouchableOpacity onPress={() => {
+        this.setState({addNoteShow: true})}}><Text>ADD</Text></TouchableOpacity>
+      <View style={style.topMiddleView}>
+      <Text>Project Notes</Text>
+      <ProjectNotes navigation={this.props.navigation}  route={this.props.route}/>
+      </View>
+      <View style={style.topMiddleView}>
+      <Text>Arbetsdagar</Text>
+      <WorkindayList  route={this.props.route} />
+      </View>
+
+
+<View style={style.bottomView}>
           <TouchableOpacity
             style={style.addButton}
             onPress={() => {
@@ -245,90 +140,145 @@ class ProjectScreen extends Component<Props, State, {}> {
             }}>
             <Text style={style.textAddButton}>Lägg till</Text>
           </TouchableOpacity>
-        </View>
-        <Modal transparent={true} visible={this.state.show}>
-          <View style={{backgroundColor: '#000000aa', flex: 1}}>
-            <View
-              style={{
-                backgroundColor: '#ffffff',
-                margin: 50,
-                padding: 40,
-                width: 300,
-                height: 400,
-              }}>
-              <BackButton
-                onPress={() => {
-                  this.closeShow();
-                }}
+        </View> 
+        <Modal transparent={true} visible={this.state.addNoteShow}>
+      <View style={{backgroundColor: '#000000aa', flex: 1}}>
+        <View
+          style={{
+            backgroundColor: '#ffffff',
+            margin: 50,
+            padding: 40,
+            width: 300,
+            height: 400,
+          }}>
+          <BackButton
+            onPress={() => {
+              this.CloseNoteShow();
+            }}
+          />
+          <Text style={style.headerTitle}>{ProjectNotes.name}</Text>
+          <TextInput
+                style={style.input}
+                placeholder="title"
+                value={this.state.title}
+                onChangeText={(text) => this.setState({title: text})}
               />
-              <Text style={style.headerTitle}>{name}</Text>
-              <Text style={{fontSize: 22}}>Lägg till tid</Text>
-              <TextInput
+               <TextInput
+                style={style.input}
+                placeholder="Text"
+                value={this.state.text}
+                onChangeText={(text) => this.setState({text: text})}
+              />
+
+          <TouchableOpacity
+            onPress={() => {this.create()}}
+            style={style.addSubmitButtonFireBase}>
+            <Text style={style.textAddButton}>ADD</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+      <Modal transparent={true} visible={this.state.show}>
+      <View style={{backgroundColor: '#000000aa', flex: 1}}>
+        <View
+          style={{
+            backgroundColor: '#ffffff',
+            margin: 50,
+            padding: 40,
+            width: 300,
+            height: 400,
+          }}>
+          <BackButton
+            onPress={() => {
+              this.closeShow();
+            }}
+          />
+          <Text style={style.headerTitle}>{name}</Text>
+          <TextInput
                 style={style.input}
                 placeholder="Timmar"
                 keyboardType="numeric"
                 onChangeText={this.props.AddProjectHours}
               />
-              <Button
-                title={this.props.chooseDate || 'Datum'}
-                onPress={() => {
-                  this.setState({datepickerOpen: true});
-                }}
-              />
+          <Button
+            title={this.props.date || 'Datum'}
+            onPress={() => {
+              this.setState({datepickerOpen: true});
+            }}
+          />
 
-              {this.state.datepickerOpen && (
-                <RNDateTimePicker
-                testID="dateTimePicker"
-                timeZoneOffsetInMinutes={0}
-                value={
-                  this.props.chooseDate ? new Date(this.props.chooseDate) : new Date()
-                }
-                maximumDate={new Date(TwentyDays)}
-                minimumDate={new Date(TwentyDaysBack)}
-                mode="date"
-                onChange={this.setDate}
-              />
-              ) }
+          {this.state.datepickerOpen && (
+            <RNDateTimePicker
+            testID="dateTimePicker"
+            timeZoneOffsetInMinutes={0}
+            value={
+              this.props.hours ? new Date(this.props.hours) : new Date()
+            }
+            maximumDate={new Date(TwentyDays)}
+            minimumDate={new Date(TwentyDaysBack)}
+            mode="date"
+            onChange={this.setDate}
+          />
+          ) }
 
-              <TouchableOpacity
-                onPress={() => {
-                  this.handleSubmitToFirebase();
-                }}
-                style={style.addSubmitButtonFireBase}>
-                <Text style={style.textAddButton}>ADD</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
-        <TouchableOpacity onPress={() => {console.log('avsluta')}}><Text>Avsuta project</Text></TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {this.test()}}
+            style={style.addSubmitButtonFireBase}>
+            <Text style={style.textAddButton}>ADD</Text>
+          </TouchableOpacity>
+        </View>
       </View>
+    </Modal>
+          </View>
+
+ 
+
+              
+
     );
   }
 }
+/*<TextInput
+            style={style.input}
+            placeholder="Timmar"
+            keyboardType="numeric"
+            onChangeText={this.props.AddProjectHours}
+          />
+          <Button
+            title={ 'Datum'}
+            onPress={() => {
+              this.setState({datepickerOpen: true});
+            }}
+          />
+
+          {this.state.datepickerOpen && (
+            <RNDateTimePicker
+            testID="dateTimePicker"
+            timeZoneOffsetInMinutes={0}
+            value={
+              this.state.chooseDate ? new Date(this.state.chooseDate) : new Date()
+            }
+            maximumDate={new Date(TwentyDays)}
+            minimumDate={new Date(TwentyDaysBack)}
+            mode="date"
+            onChange={this.setDate}
+          />
+          ) }*/
 
 function mapStateToProps(state: RootState, props: OwnProps) {
   return {
-    chooseDate: state.projectReducer.chooseDate,
-    store: state,
-    hours: state.projectReducer.chooseHours,
-    date: state.projectReducer.chooseDate,
-    project: state.projectReducer.projects.find(
-      project => project.id === props.route.params.id,
-    ),
-    note: state.notesReducer.notes,
-    title: state.notesReducer.text,
-    text: state.notesReducer.title,
-    createdAt: state.notesReducer.createdAt
+    project: state.project.data.find(project => project.id === props.route.params.id),
+    hours: state.project.chooseHours,
+    date: state.project.chooseDate
   };
 }
 const mapDispatchToProps = {
+  AddNewProjectNote,
+  updateProject,
   AddProjectDate,
-  submitWorkingDay,
-  AddProjectHours,
-  submitNewNote,
-  AddNotesText,
-  AddNotesTitle,
-  getAllNotes,
+  AddProjectHours
+
+
 };
 const connector = connect(
   mapStateToProps,
@@ -346,7 +296,7 @@ const style = StyleSheet.create({
     flex: 1,
   },
   topMiddleView: {
-    flex: 0.8,
+    flex: 1,
   },
   middleView: {
     flex: 1.6,
@@ -390,14 +340,7 @@ const style = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#000',
   },
-  projectItem: {
-    backgroundColor: '#FFFFFF',
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
-    height: 60,
-    width: 360,
-  },
+
   addNoteButton: {
     width: 60,
     height: 40,
@@ -416,6 +359,29 @@ const style = StyleSheet.create({
     height: 40,
     alignSelf: 'center',
     borderWidth: 2,
+  },
+  endProjectModalText: {
+    fontSize: 24,
+    textAlign: 'center'
+  },
+  continue: {
+    marginTop: 40,
+    alignSelf: 'center',
+    borderWidth: 2,
+    borderRadius: 1,
+    width: 200,
+  },
+  continueText: {
+    fontSize: 18,
+    textAlign: 'center'
+  },
+  projectItem: {
+    backgroundColor: '#FFFFFF',
+    padding: 20,
+    marginVertical: 8,
+    marginHorizontal: 16,
+    height: 60,
+    width: 360,
   },
 });
 

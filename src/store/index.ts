@@ -1,12 +1,19 @@
 import {combineReducers} from 'redux';
 import projectReducer from 'store/reducers/projectReducer';
-import notesReducer from 'store/reducers/notesReducer';
-import personReducer from 'store/reducers/personReducer';
+import {ProjectState } from './actions/Project/types';
+import projectNoteReducer from 'store/reducers/projectNoteReducer';
+import {ProjectNoteState} from './actions/ProjectNotes/types';
 
+
+export interface ApplicationState {
+  project: ProjectState;
+  projectNote : ProjectNoteState;
+
+}
 const rootReducer = combineReducers({
-  projectReducer,
-  notesReducer,
-  personReducer,
+  project: projectReducer,
+  projectNote : projectNoteReducer
+
 });
 
 export default rootReducer;
