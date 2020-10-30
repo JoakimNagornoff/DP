@@ -23,11 +23,13 @@ export const fetchNoteData = async () => {
   }
 }
 export const fetchProjectNoteData = async (projectId) => {
-  const urlLink = `${environment.readProjectNotesById}/${projectId.projectId}`;
+  const urlLink = `${environment.readProjectNotesByProjectId}/${projectId.projectId}`;
   try {
     let NoteItems =  []
     const response = await fetch(urlLink)
+    console.log('response', response)
     const res = await response.json();
+    console.log('res', res)
     NoteItems = res
     return NoteItems
     }
@@ -106,13 +108,29 @@ export const createData = async (name) => {
       try {
         let Items =  []
         const response = await fetch(urlLink)
+        console.log('resposne',response)
         const res = await response.json();
+        console.log('res', res)
         Items = res
         return Items
         }
          catch (error) {
           console.log(error);
         }
+    }
+    export const getProjectNotesDataWithId= async(id) => {
+      const urlLink = `${environment.readProjectNotesById}/${id.id}`
+      try {
+        let Items =  []
+        const response = await fetch(urlLink)
+        console.log('response', response)
+        const res = await response.json();
+        console.log('res', res)
+        Items = res
+        return Items
+      } catch (error) {
+        console.log(error);
+      }
     }
 
 export const environment = {
@@ -122,7 +140,8 @@ export const environment = {
     readById: 'https://us-central1-dpopt-a5acd.cloudfunctions.net/project/api/read',
     createNote: 'https://us-central1-dpopt-a5acd.cloudfunctions.net/projectNote/api/create/note',
     readAllNote: 'https://us-central1-dpopt-a5acd.cloudfunctions.net/projectNote/api/read/notes',
-    readProjectNotesById : 'https://us-central1-dpopt-a5acd.cloudfunctions.net/projectNote/api/read/notes',
+    readProjectNotesByProjectId : 'https://us-central1-dpopt-a5acd.cloudfunctions.net/projectNote/api/read/notes',
+    readProjectNotesById : 'https://us-central1-dpopt-a5acd.cloudfunctions.net/projectNote/api/read/note',
     updateProjectNote: 'https://us-central1-dpopt-a5acd.cloudfunctions.net/projectNote/api/update/note'
 
     

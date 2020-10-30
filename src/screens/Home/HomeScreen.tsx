@@ -43,8 +43,9 @@ class HomeScreen extends Component<Props, State, {}> {
     };
   }
   componentDidMount() {
-    this.props.requestApiProjectData()
+    //this.props.requestApiProjectData()
     this.firebaseTest()
+    this.test()
   }
 
  
@@ -64,17 +65,30 @@ class HomeScreen extends Component<Props, State, {}> {
    this.setState({show: false})
 
   }
+  test() {
+   
+
+  }
    firebaseTest ()  {
+      const id = [];
+    const docs = this.props.project
+
+    for(const doc of docs){
+      const selectedProjects = {
+        id : doc.id
+      }
+      id.push(selectedProjects)
+      console.log('id array',id)
+    }
      let addedId = ''
    firestore().collection('Projects')
   .onSnapshot(querySnapshot => {
     querySnapshot.docChanges().forEach(change => {
       if (change.type === 'added') {
-        if(change.doc.exists){
+        if(change.doc.id){
           addedId = ''
         }
         else {
-          console.log('new Project: ', change.doc.id)
           addedId = change.doc.id
         }  
       }
@@ -82,7 +96,6 @@ class HomeScreen extends Component<Props, State, {}> {
         if(change.doc.exists){
           addedId = ''
         } else {
-          console.log('Project modifed' , change.doc.data());
           addedId = change.doc.id
         }
       }
@@ -90,10 +103,11 @@ class HomeScreen extends Component<Props, State, {}> {
         console.log('Removed Project: ', change.doc.data());
           
       }
-    })
+    });
     const id = addedId
     console.log(id)
     this.props.requestApiProjectDataWithId({id})
+    addedId = ''
   });
   
   }

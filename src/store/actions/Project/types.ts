@@ -10,8 +10,6 @@ export const RECIEVE_API_CREATE_PROJECT = 'RECIEVE_API_CREATE_PROJECT';
 export const REQUEST_API_UPDATE_PROJECT = 'REQUEST_API_UPDATE_PROJECT';
 export const RECIEVE_API_UPDATE_PROJECT = 'RECIEVE_API_UPDATE_PROJECT';
 
-export const FIREBASE_LISTEN_REQUESTED = 'FIREBASE_LISTEN_REQUESTED';
-export const FIREBASE_LISTEN_FULFILLED = 'FIREBASE_LISTEN_FULFILLED'
 
 export const ADD_PROJECT_DATE = 'ADD_PROJECT_DATE';
 export const ADD_PROJECT_HOURS = 'ADD_PROJECT_HOURS'
@@ -68,15 +66,8 @@ interface recieveApiProjectDataAction {
     type: typeof ADD_PROJECT_HOURS;
     payload: number;
   }
-  interface firebaseListingRequestAction {
-    type: typeof FIREBASE_LISTEN_REQUESTED;
-    payload: any;
-  }
-  interface firebaseListingFulfilledAction {
-    type: typeof FIREBASE_LISTEN_FULFILLED;
-    payload: any[]
-  }
+
 
   export type ProjectActionType =
    RequestApiProjectDataAction
-  | recieveApiProjectDataAction |recieveApiUpdateProjectdataAction | requestApiProjectDataAction | AddProjectDateAction | AddProjectHourAction | firebaseListingRequestAction | firebaseListingFulfilledAction | requestApiProjectDataWithIdAction | recieveApiProjectDataWithIdAction
+  | recieveApiProjectDataAction |recieveApiUpdateProjectdataAction | requestApiProjectDataAction | AddProjectDateAction | AddProjectHourAction  | requestApiProjectDataWithIdAction | recieveApiProjectDataWithIdAction

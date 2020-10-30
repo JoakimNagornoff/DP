@@ -1,4 +1,4 @@
-import { ADD_PROJECT_HOURS,ADD_PROJECT_DATE,REQUEST_API_PROJECT_DATA, RECIEVE_API_PROJECT_DATA, REQUEST_API_CREATE_PROJECT, Project, ProjectActionType, REQUEST_API_UPDATE_PROJECT, RECIEVE_API_UPDATE_PROJECT, FIREBASE_LISTEN_REQUESTED, FIREBASE_LISTEN_FULFILLED, REQUEST_API_PROJECT_DATA_WITH_ID, RECIEVE_API_PROJECT_DATA_WITH_ID} from './types'
+import { ADD_PROJECT_HOURS,ADD_PROJECT_DATE,REQUEST_API_PROJECT_DATA, RECIEVE_API_PROJECT_DATA, REQUEST_API_CREATE_PROJECT, Project, ProjectActionType, REQUEST_API_UPDATE_PROJECT, RECIEVE_API_UPDATE_PROJECT,  REQUEST_API_PROJECT_DATA_WITH_ID, RECIEVE_API_PROJECT_DATA_WITH_ID, FIREBASE_PROJECT_LIST_LISTENER} from './types'
 import firestore, { firebase } from '@react-native-firebase/firestore';
 
 export const requestApiProjectData = () => {
@@ -60,17 +60,4 @@ export const requestApiProjectData = () => {
     }
   }
 
-export const requestFirebaseListing = ()  => {
-  var list_projects = [] as any;
-  return {
-    type: FIREBASE_LISTEN_REQUESTED,
-    payload: firestore().collection("Projects").get().then((querySnapshot) => {
-      querySnapshot.forEach((document) => {
-        list_projects.push(document.data())
-      });
-    }).then(() => {
-      console.log(list_projects)
-    })
-    
-}
-}
+ 

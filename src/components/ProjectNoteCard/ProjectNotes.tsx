@@ -8,7 +8,8 @@ import { ApplicationState } from 'store';
 import ActivityIndicatorExample from 'components/ActivityIndicatorExample';
 
 import BackButton from 'components/BackButton/BackButton';
-import {AddNewProjectNote, requestApiProjectNotesData} from 'store/actions/ProjectNotes/action'
+import {AddNewProjectNote, requestApiProjectNotesData, requestApiNoteByid} from 'store/actions/ProjectNotes/action'
+import firestore from '@react-native-firebase/firestore';
 
 
 function ItemNote({title, text}) {
@@ -35,11 +36,11 @@ class ProjectNotes extends Component<Props, State> {
     }
   }
   componentDidMount() {
-   this.test()
+    this.test()
   }
   test () {
     const projectId= this.props.project?.id
-  this.props.requestApiProjectNotesData({projectId})
+   this.props.requestApiProjectNotesData({projectId})
   }
 
   
@@ -48,6 +49,7 @@ class ProjectNotes extends Component<Props, State> {
       addNoteShow: false,
     });
   }
+
     render() {
       const {navigate} = this.props.navigation;
 
@@ -86,13 +88,15 @@ function mapStateToProps(state: ApplicationState, props : OwnProps) {
       store: state,
       loading: state.project.loading,
       notes: state.projectNote.data,
+
      
       project: state.project.data.find(project => project.id === props.route.params.id),
     };
   }
   const mapDispatchToProps = {
     AddNewProjectNote,
-    requestApiProjectNotesData
+    requestApiProjectNotesData,
+    requestApiNoteByid
 
   };
 

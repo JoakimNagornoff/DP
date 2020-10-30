@@ -8,7 +8,10 @@ export const RECIEVE_API_PROJECT_NOTES = 'RECIEVE_API_PROJECT_NOTES'
 export const REQUEST_API_CREATE_NOTE = 'REQUEST_API_CREATE_NOTE';
 export const RECIEVE_API_CREATE_NOTE = 'RECIEVE_API_CREATE_NOTE';
 
-export const REQUEST_UPDATE_API_PROJECT_NOTE = 'REQUEST_UPDATE_API_PROJECT_NOTE'
+export const REQUEST_UPDATE_API_PROJECT_NOTE = 'REQUEST_UPDATE_API_PROJECT_NOTE';
+
+export const REQUEST_API_NOTE_BY_ID = 'REQUEST_API_NOTE_BY_ID';
+export const RECIEVE_API_NOTE_BY_ID = 'RECIEVE_API_NOTE_BY_ID';
 
 export interface ProjectNote {
     id: string;
@@ -40,5 +43,12 @@ interface recieveApiProjectNotesAction {
     type: typeof RECIEVE_API_PROJECT_NOTES;
     payload:ProjectNote[]; 
 }
+interface requestApiNoteByIdAction  {
+    type: typeof REQUEST_API_NOTE_BY_ID
+}
+interface recieveApiNoteByIdAction  {
+    type: typeof RECIEVE_API_NOTE_BY_ID;
+    payload: ProjectNote[];
+}
 
-export type ProjectNoteActionType = requestApiProjectNoteAction | recieveApiProjectNoteAction | requestApiProjectNotesAction | recieveApiProjectNotesAction
+export type ProjectNoteActionType = requestApiProjectNoteAction | recieveApiProjectNoteAction | requestApiProjectNotesAction | recieveApiProjectNotesAction | requestApiNoteByIdAction | recieveApiNoteByIdAction

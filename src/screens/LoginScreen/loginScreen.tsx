@@ -9,7 +9,6 @@ import {
 import auth from '@react-native-firebase/auth';
 import {connect, ConnectedProps} from 'react-redux';
 import {RootState} from 'store';
-import {AuthLogin} from 'store/actions/action';
 import {State} from 'react-native-gesture-handler';
 
 class LoginInScreen extends Component<Props, {}> {
@@ -56,13 +55,10 @@ class LoginInScreen extends Component<Props, {}> {
 }
 function mapStateToProps(state: RootState) {
   return {
-    isLoading: state.personReducer.fireBasePending,
-    error: state.personReducer.fireBaseError,
-    isSucces: state.personReducer.fireBaseSucces,
+
   };
 }
 const mapDispatchToProps = {
-  AuthLogin,
 };
 const connector = connect(
   mapStateToProps,

@@ -75,16 +75,11 @@ class ProjectScreen extends Component<Props, State, {}> {
     }
   };
 
-  //Submit WorkingDay method
-
-  //Submit project note method
   openDatePicker () {
     this.setState({
       datepickerOpen: true
     })
   }
- 
-
   closeShow() {
     this.setState({
       show: false,
@@ -117,6 +112,8 @@ class ProjectScreen extends Component<Props, State, {}> {
       return <Text>Error loading project</Text>;
     }
     const {name, id} = this.props.route.params;
+    console.log('ProjectScreen', id)
+    console.log(this.props.project)
     return (
       <View style={style.container}>
 
@@ -238,35 +235,10 @@ class ProjectScreen extends Component<Props, State, {}> {
     );
   }
 }
-/*<TextInput
-            style={style.input}
-            placeholder="Timmar"
-            keyboardType="numeric"
-            onChangeText={this.props.AddProjectHours}
-          />
-          <Button
-            title={ 'Datum'}
-            onPress={() => {
-              this.setState({datepickerOpen: true});
-            }}
-          />
-
-          {this.state.datepickerOpen && (
-            <RNDateTimePicker
-            testID="dateTimePicker"
-            timeZoneOffsetInMinutes={0}
-            value={
-              this.state.chooseDate ? new Date(this.state.chooseDate) : new Date()
-            }
-            maximumDate={new Date(TwentyDays)}
-            minimumDate={new Date(TwentyDaysBack)}
-            mode="date"
-            onChange={this.setDate}
-          />
-          ) }*/
 
 function mapStateToProps(state: RootState, props: OwnProps) {
   return {
+   // project: state.project.data.find(project => project.id === props.route.params.id),
     project: state.project.data.find(project => project.id === props.route.params.id),
     hours: state.project.chooseHours,
     date: state.project.chooseDate

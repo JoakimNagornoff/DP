@@ -1,4 +1,4 @@
-import { ProjectNoteActionType, ProjectNote, REQUEST_API_NOTE_DATA, RECIEVE_API_NOTE_DATA, REQUEST_API_CREATE_NOTE, REQUEST_API_PROJECT_NOTES, RECIEVE_API_PROJECT_NOTES, REQUEST_UPDATE_API_PROJECT_NOTE} from './types'
+import { ProjectNoteActionType, ProjectNote, REQUEST_API_NOTE_DATA, RECIEVE_API_NOTE_DATA, REQUEST_API_CREATE_NOTE, REQUEST_API_PROJECT_NOTES, RECIEVE_API_PROJECT_NOTES, REQUEST_UPDATE_API_PROJECT_NOTE, RECIEVE_API_NOTE_BY_ID, REQUEST_API_NOTE_BY_ID} from './types'
 
 export const requestApiProjectNoteData = () => {
     return {
@@ -41,5 +41,18 @@ export const updateProjectNote = (id, title, text) => {
         id,
         title,
         text
+    }
+}
+export const requestApiNoteByid = (id) => {
+    return {
+        type: REQUEST_API_NOTE_BY_ID,
+        id
+    }
+}
+
+export const recieveApiNoteById = (data: ProjectNote []) : ProjectNoteActionType => {
+    return {
+        type: RECIEVE_API_NOTE_BY_ID,
+        payload: data
     }
 }

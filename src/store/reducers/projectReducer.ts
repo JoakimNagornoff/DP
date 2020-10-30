@@ -7,8 +7,7 @@ import {
   REQUEST_API_PROJECT_DATA,
   REQUEST_API_UPDATE_PROJECT,
   RECIEVE_API_UPDATE_PROJECT,
-  FIREBASE_LISTEN_REQUESTED,
-  FIREBASE_LISTEN_FULFILLED,
+
   REQUEST_API_PROJECT_DATA_WITH_ID,
   RECIEVE_API_PROJECT_DATA_WITH_ID
 } from '../actions/Project/types';
@@ -25,11 +24,12 @@ const projectReducer = (
   action: ProjectActionType,
 ): ProjectState => {
   switch (action.type) {
-    case REQUEST_API_PROJECT_DATA:
+    case REQUEST_API_PROJECT_DATA:{
       return {
         ...state,
         loading: true,
       }
+    }
       case RECIEVE_API_PROJECT_DATA: {
         return {
           ...state,
@@ -82,19 +82,11 @@ const projectReducer = (
                 ...state,
                 data: action.payload,
               }
-            }
-            case FIREBASE_LISTEN_REQUESTED: {
-              return {
-                ...state,
-                loading: true
-              }
-            }
-  
-           
-
-  }
-   
-
-  return state;
+          }
+        
+      }
+      return state;
 }
+  
+
 export default projectReducer;
