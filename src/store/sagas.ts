@@ -91,8 +91,8 @@ function* updateApiProjectData(action) {
 function* updateApiProjectNote(action) {
   try {
     const res = yield updateProjectNoteData(action.id, action.title, action.text);
-    const data = yield call(fetchNoteData)
-    yield put(recieveApiProjectNoteData(data))
+    const data = yield call(getProjectNotesDataWithId, action.id)
+    yield put(recieveApiNoteById(data))
   }
   catch(e) {
     console.log(e)

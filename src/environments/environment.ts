@@ -127,6 +127,7 @@ export const createData = async (name) => {
         const res = await response.json();
         console.log('res', res)
         Items = res
+        console.log('Items', Items)
         return Items
       } catch (error) {
         console.log(error);

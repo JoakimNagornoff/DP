@@ -23,6 +23,7 @@ import ActivityIndicatorExample from 'components/ActivityIndicatorExample';
 import BackButton from 'components/BackButton/BackButton';
 import ProjectList from '@components/ProjectList/ProjectList'
 import firestore from '@react-native-firebase/firestore';
+import {showModal} from 'store/actions/Modals/action'
 
 
 interface State {
@@ -45,7 +46,6 @@ class HomeScreen extends Component<Props, State, {}> {
   componentDidMount() {
     //this.props.requestApiProjectData()
     this.firebaseTest()
-    this.test()
   }
 
  
@@ -65,10 +65,8 @@ class HomeScreen extends Component<Props, State, {}> {
    this.setState({show: false})
 
   }
-  test() {
-   
 
-  }
+  
    firebaseTest ()  {
       const id = [];
     const docs = this.props.project
@@ -153,7 +151,9 @@ class HomeScreen extends Component<Props, State, {}> {
           </View>
         </Modal>
         <View style={style.middleContainer}></View>
+        <TouchableOpacity onPress={() => {this.props.showModal()}}><Text>CLICK</Text></TouchableOpacity>
         <View style={style.bottomContainer}>
+  
         <TouchableOpacity  style={style.notesSceenButton} onPress={() => {this.openModal()}}><Text>TEST</Text></TouchableOpacity>
         </View>
         </View>
@@ -178,8 +178,10 @@ const mapDispatchToProps = {
   requestApiProjectData,
   AddNewProject,
   requestApiProjectNoteData,
-  requestApiProjectDataWithId
-};
+  requestApiProjectDataWithId,
+  showModal,
+
+ }
 
 const connector = connect(
   mapStateToProps,

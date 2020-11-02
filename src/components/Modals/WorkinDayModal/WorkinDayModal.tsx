@@ -8,6 +8,7 @@ import TwentyDays from 'components/DatePickerModal/components/TwentyDays/TwentyD
 import TwentyDaysBack from 'components/DatePickerModal/components/TwentyDaysBack/TwentyDaysBack';
 import formdateDate from 'components/DatePickerModal/components/formdateDate';
 import {updateProject, AddProjectHours, AddProjectDate} from 'store/actions/Project/action'
+import {closeModal} from 'store/actions/Modals/action'
 
 
 if (Platform.OS === 'android') {
@@ -18,43 +19,34 @@ if (Platform.OS === 'android') {
 
 interface State {
     datepickerOpen: boolean;
-    show: boolean;
 }
 class WorkinDayModal extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            show: false,
             datepickerOpen: false,
     }
     }
-    closeShow() {
-      this.setState({
-        show: false,
-      });
-  
-    }
+
 
     _onChange = form => console.log(form);
     setDate = (event, date) => {
       this.setState({datepickerOpen: false});
       if (!!date) {
-       // this.props.Add(formdateDate({chooseDate}))
       this.props.AddProjectDate(formdateDate(date))
-      //console.log(formdateDate(date))
       }
     };
     test() {
         const {date, hours} = this.props
         const id = this.props.project?.id
         this.props.updateProject({id},{hours},{date})
-        this.setState({show: false})
+        this.props.closeModal()
+
       }
-  
     render() {
         return (
-    
-        <Modal transparent={true}>
+         
+        <Modal transparent={true} visible={this.props.modal.openModal}>
       <View style={{backgroundColor: '#000000aa', flex: 1}}>
         <View
           style={{
@@ -66,7 +58,8 @@ class WorkinDayModal extends Component<Props, State> {
           }}>
             <BackButton
       onPress={() => {
-        this.closeShow();
+        this.props.closeModal()
+
       }}></BackButton>
 
           <Text style={style.headerTitle}>{this.props.project?.project.name}</Text>
@@ -113,15 +106,15 @@ function mapStateToProps(state: RootState, props: OwnProps) {
     return {
       project: state.project.data.find(project => project.id === props.route.params.id),
       hours: state.project.chooseHours,
-      date: state.project.chooseDate
+      date: state.project.chooseDate,
+      modal: state.modal
     };
   }
   const mapDispatchToProps = {
     updateProject,
     AddProjectDate,
-    AddProjectHours
-  
-  
+    AddProjectHours,
+    closeModal
   };
   const connector = connect(
     mapStateToProps,
