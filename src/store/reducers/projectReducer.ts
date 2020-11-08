@@ -7,7 +7,8 @@ import {
   REQUEST_API_PROJECT_DATA,
   REQUEST_API_UPDATE_PROJECT,
   RECIEVE_API_UPDATE_PROJECT,
-
+  REQUEST_API_CREATE_PROJECT,
+  RECIEVE_API_CREATE_PROJECT,
   REQUEST_API_PROJECT_DATA_WITH_ID,
   RECIEVE_API_PROJECT_DATA_WITH_ID
 } from '../actions/Project/types';
@@ -43,6 +44,20 @@ const projectReducer = (
             loading: false,
             error: 'error',
             
+          }
+        }
+        case REQUEST_API_CREATE_PROJECT: {
+          return {
+            ...state,
+            loading: true
+          }
+        }
+        case RECIEVE_API_CREATE_PROJECT: {
+          const newProject = action.payload;
+          return {
+            ...state,
+            loading: false,
+            data : [...state.data,newProject]
           }
         }
         case REQUEST_API_PROJECT_DATA_WITH_ID: {

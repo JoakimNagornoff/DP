@@ -16,8 +16,6 @@ function Item({name, id}) {
 class ProjectList extends Component <Props> {
     render(){
         const {navigate} = this.props.navigation;
-        {console.log('ProjectList', this.props.projects.length)}
-
         return (
             <View style={style.container}>
             <FlatList

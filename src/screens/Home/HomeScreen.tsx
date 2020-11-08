@@ -20,12 +20,11 @@ import {
   requestApiProjectNoteData
 } from 'store/actions/ProjectNotes/action'
 import ActivityIndicatorExample from 'components/ActivityIndicatorExample';
-import BackButton from 'components/BackButton/BackButton';
 import ProjectList from '@components/ProjectList/ProjectList'
-import firestore from '@react-native-firebase/firestore';
-import {showModal} from 'store/actions/Modals/action'
-
-
+import firestore, { firebase } from '@react-native-firebase/firestore';
+import {showProjectModal} from 'store/actions/Modals/action'
+import ProjectModal from 'components/Modals/ProjectModal/ProjectModal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 interface State {
   show: boolean;
   name: string;
@@ -34,7 +33,6 @@ interface State {
 }
 
 class HomeScreen extends Component<Props, State, {}> {
-  unsubscribe: void;
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -44,29 +42,9 @@ class HomeScreen extends Component<Props, State, {}> {
     };
   }
   componentDidMount() {
-    //this.props.requestApiProjectData()
-    this.firebaseTest()
+    this.props.requestApiProjectData()
   }
 
- 
-  onItemClicked() {
-    this.props.navigation.navigate('Projects'), {};
-  }
-  
-  openModal () {
-    this.setState({show: true})
-  }
-  closeModal () {
-    this.setState({show: false})
-  }
-  create() {
-    const {name, show} = this.state
-   this.props.AddNewProject({name})
-   this.setState({show: false})
-
-  }
-
-  
    firebaseTest ()  {
       const id = [];
     const docs = this.props.project
@@ -111,50 +89,20 @@ class HomeScreen extends Component<Props, State, {}> {
   }
   render() {
     const {navigate} = this.props.navigation;
-  
     return (
       <View style={style.container}>
         {this.props.loading && (
           <Text>loading</Text>
         )}
       
-       <ProjectList navigation={this.props.navigation}></ProjectList>
-        <Modal transparent={true} visible={this.state.show}>
-          <View style={{backgroundColor: '#000000aa', flex: 1}}>
-            <View
-              style={{
-                backgroundColor: '#ffffff',
-                margin: 50,
-                padding: 40,
-                width: 300,
-                height: 350,
-              }}>
-              <BackButton
-                onPress={() => {
-                  this.closeModal();
-                }}
-              />
-              <Text style={{fontSize: 30}}>Lägg till Projekt</Text>
-              <TextInput
-                style={style.input}
-                placeholder="Projekt"
-                value={this.state.name}
-                onChangeText={(text) => this.setState({ name: text })}
-              />
-              <TouchableOpacity
-                onPress={() => {
-                 this.create()
-                }}>
-                <Text>Lägg till</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
+       
+     <ProjectList navigation={this.props.navigation}></ProjectList>
+       <ProjectModal route={this.props.route}></ProjectModal>
+        
         <View style={style.middleContainer}></View>
-        <TouchableOpacity onPress={() => {this.props.showModal()}}><Text>CLICK</Text></TouchableOpacity>
         <View style={style.bottomContainer}>
   
-        <TouchableOpacity  style={style.notesSceenButton} onPress={() => {this.openModal()}}><Text>TEST</Text></TouchableOpacity>
+        <TouchableOpacity  style={style.notesSceenButton} onPress={() => {this.props.showProjectModal()}}><Text>TEST</Text></TouchableOpacity>
         </View>
         </View>
 
@@ -179,7 +127,8 @@ const mapDispatchToProps = {
   AddNewProject,
   requestApiProjectNoteData,
   requestApiProjectDataWithId,
-  showModal,
+  showProjectModal
+  
 
  }
 

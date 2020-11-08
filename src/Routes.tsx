@@ -5,6 +5,8 @@ import {Provider} from 'react-redux';
 import {createStore, applyMiddleware} from 'redux';
 import createSagaMidleware, { runSaga } from 'redux-saga'
 import rootSaga from './store/sagas'
+import { composeWithDevTools } from 'redux-devtools-extension';
+
 
 //screens
 import HomeScreen from './screens/Home/HomeScreen';
@@ -23,9 +25,10 @@ const sagaMiddleware = createSagaMidleware();
 const middleWare = [sagaMiddleware];
 
 const store = createStore(
-  rootReducer,
-  applyMiddleware(...middleWare)
-)
+  rootReducer,composeWithDevTools(
+  applyMiddleware(...middleWare),
+  
+))
 sagaMiddleware.run(rootSaga);
 
 
@@ -40,7 +43,7 @@ export const Routes: React.FC<RoutesProps> = ({}) => {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
+        <Stack.Navigator initialRouteName="LogIn">
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Projects" component={ProjectScreen} />
           <Stack.Screen name="ProjectNote" component={ProjectNote} />

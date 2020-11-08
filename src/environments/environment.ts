@@ -1,15 +1,27 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
+
 export const fetchData = async () => {
-    try {
-      let Items =  []
-      const response = await fetch(environment.readAll)
-      const res = await response.json();
+  try {
+    const value = await AsyncStorage.getItem('@idToken')
+      if(value !== null) {
+        const urlLink = `${environment.readAll}`
+       let Items =  []
+        const response = await fetch(urlLink, {
+        method : 'GET',
+        headers: {
+          Authorization: `Bearer ${value}`,
+        }
+      })
+      const res = await response.json()
       Items = res
       return Items
+    }
+  } catch (error) {
+        console.log(error.response.data.error.message)
       }
-       catch (error) {
-        console.log(error);
       }
-}
 
 export const fetchNoteData = async () => {
   try {
@@ -40,19 +52,30 @@ export const fetchProjectNoteData = async (projectId) => {
 
 export const createData = async (name) => {
   try {
-    const res = await fetch( environment.create, {
-      method: 'POST', 
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-    },
-      body: JSON.stringify({
-       name : name.name
-      })   
-    })
-  } catch(error) {
-    console.log(error)
-  }}
+    const token = await AsyncStorage.getItem('@idToken')
+      if(token !== null) {
+        const urlLink = `${environment.create}`
+       let Items =  []
+        const response = await fetch(urlLink, {
+          method: 'POST', 
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+          body: JSON.stringify({
+           name : name.name
+          })   
+        })
+      const res = await response.json()
+      Items = res
+      return Items
+    }
+  } catch (error) {
+        console.log(error.response.data.error.message)
+      }
+    }
+
   export const createNoteData = async (projectId, title, text) => {
     try {
       const res = await fetch(environment.createNote, {

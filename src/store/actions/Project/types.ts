@@ -10,7 +10,6 @@ export const RECIEVE_API_CREATE_PROJECT = 'RECIEVE_API_CREATE_PROJECT';
 export const REQUEST_API_UPDATE_PROJECT = 'REQUEST_API_UPDATE_PROJECT';
 export const RECIEVE_API_UPDATE_PROJECT = 'RECIEVE_API_UPDATE_PROJECT';
 
-
 export const ADD_PROJECT_DATE = 'ADD_PROJECT_DATE';
 export const ADD_PROJECT_HOURS = 'ADD_PROJECT_HOURS'
 
@@ -42,7 +41,13 @@ interface recieveApiProjectDataWithIdAction {
   type: typeof RECIEVE_API_PROJECT_DATA_WITH_ID
   payload: any
 }
-  
+interface requestApiCreateProjectdata {
+  type: typeof REQUEST_API_CREATE_PROJECT;
+}
+interface recieveAPiCreateprojectdata {
+  type: typeof RECIEVE_API_CREATE_PROJECT;
+  payload: any
+}
 interface recieveApiProjectDataAction {
     type: typeof RECIEVE_API_PROJECT_DATA;
     payload: Project[];
@@ -70,4 +75,4 @@ interface recieveApiProjectDataAction {
 
   export type ProjectActionType =
    RequestApiProjectDataAction
-  | recieveApiProjectDataAction |recieveApiUpdateProjectdataAction | requestApiProjectDataAction | AddProjectDateAction | AddProjectHourAction  | requestApiProjectDataWithIdAction | recieveApiProjectDataWithIdAction
+  | recieveApiProjectDataAction |recieveApiUpdateProjectdataAction | requestApiProjectDataAction | AddProjectDateAction | AddProjectHourAction  | requestApiProjectDataWithIdAction | recieveApiProjectDataWithIdAction | requestApiCreateProjectdata |recieveAPiCreateprojectdata 

@@ -1,10 +1,10 @@
 import {all, call, fork, put, take, takeEvery, takeLatest } from 'redux-saga/effects'
-import {requestApiProjectData, recieveApiProjectData, recieveApiUpdateProjectdata, recieveApiProjectDataWithId, requestApiProjectDataWithId} from './actions/Project/action'
+import {requestApiProjectData, recieveApiProjectData, recieveApiUpdateProjectdata, recieveApiProjectDataWithId, requestApiProjectDataWithId, recieveApiCreatedProjectData} from './actions/Project/action'
 import { REQUEST_API_CREATE_PROJECT, REQUEST_API_PROJECT_DATA, REQUEST_API_PROJECT_DATA_WITH_ID, REQUEST_API_UPDATE_PROJECT } from './actions/Project/types';
 import {requestApiProjectNoteData, recieveApiProjectNoteData, recieveApiProjectNotesData, recieveApiNoteById, } from './actions/ProjectNotes/action'
 import { REQUEST_API_CREATE_NOTE, REQUEST_API_NOTE_DATA, REQUEST_API_PROJECT_NOTES, RECIEVE_API_PROJECT_NOTES, REQUEST_UPDATE_API_PROJECT_NOTE, REQUEST_API_NOTE_BY_ID} from './actions/ProjectNotes/types'
-
 import {createData, fetchData, fetchNoteData, createNoteData, updateProjectData, fetchProjectNoteData, updateProjectNoteData, getDataWithId, getProjectNotesDataWithId} from '../environments/environment'
+
 
 //get api Projects
 function* getApiData() {
@@ -15,12 +15,15 @@ function* getApiData() {
      console.log(e);
    }
 }
+
 //create api project
 function* createApiData(action) {
   try {
-    const res = yield createData(action.name);
-    const data = yield call(fetchData);
-    yield put(recieveApiProjectData(data));
+    const data = yield call (createData,action.name);
+    console.log(data)
+    yield put(recieveApiCreatedProjectData(data))
+  // const data = yield call();
+   // yield put(recieveApiProjectData());
   } catch(e) {
     console.log(e)
   }

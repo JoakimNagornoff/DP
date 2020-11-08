@@ -5,6 +5,7 @@ import projectNoteReducer from 'store/reducers/projectNoteReducer';
 import {ProjectNoteState} from './actions/ProjectNotes/types';
 import modalReducer from './reducers/modalReducer'
 import { ModalState } from './actions/Modals/types';
+import userReducer from './reducers/userReducer'
 
 
 export interface ApplicationState {
@@ -12,11 +13,13 @@ export interface ApplicationState {
   projectNote : ProjectNoteState;
   modal: ModalState;
 
+
 }
 const rootReducer = combineReducers({
   project: projectReducer,
   projectNote : projectNoteReducer,
-  modal: modalReducer
+  modal: modalReducer,
+  user: userReducer
 
 });
 
