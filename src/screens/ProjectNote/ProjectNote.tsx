@@ -10,14 +10,14 @@ import {
 import {ApplicationState} from 'store';
 import {connect, ConnectedProps} from 'react-redux';
 import {
-updateProjectNote
+updateProjectNote,
+requestApiDeleteNote
 } from 'store/actions/ProjectNotes/action';
 
 interface State {
   editTitle: boolean;
   editText: boolean;
   title: string;
-  editedProjectNote: any[];
   text: string;
   id: string
 }
@@ -28,7 +28,6 @@ class ProjectNote extends Component<Props, State, {}> {
     this.state = {
       editTitle: true,
       editText: false,
-      editedProjectNote: [],
       title: props.route.params.title,
       text: props.route.params.text,
       id: props.route.params.id
@@ -49,10 +48,17 @@ class ProjectNote extends Component<Props, State, {}> {
     this.props.navigation.goBack()
 
   }
+  handleDeleteProjectNote() {
+    const {id} = this.state
+    if ( id !== null){
+      this.props.requestApiDeleteNote({id})
+    }
+  this.props.navigation.goBack()
+  }
 
   render() {
     const {note} = this.props;
-    const {id} = this.props.route.params;
+   
     if (!note) {
       return (
         <View style={style.container}>
@@ -60,7 +66,7 @@ class ProjectNote extends Component<Props, State, {}> {
         </View>
      );
     }
-    console.log(this.props.note)
+  
     return (
       <View style={style.container}>
         <View style={style.titleView}>
@@ -84,7 +90,12 @@ class ProjectNote extends Component<Props, State, {}> {
             }}>
             <Text>ADD</Text>
           </TouchableOpacity>
+          
         </View>
+        
+        <TouchableOpacity onPress={() => {
+          this.handleDeleteProjectNote()
+        }}><Text>TA BORT MIG</Text></TouchableOpacity>
       </View>
     );
   }
@@ -97,7 +108,8 @@ function mapStateToProps(state: ApplicationState, props: OwnProps) {
   };
 }
 const mapDispatchToProps = {
-  updateProjectNote
+  updateProjectNote,
+  requestApiDeleteNote
 
 };
 const connector = connect(

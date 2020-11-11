@@ -1,7 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
-
+//done
 export const fetchData = async () => {
   try {
     const value = await AsyncStorage.getItem('@idToken')
@@ -22,34 +21,53 @@ export const fetchData = async () => {
         console.log(error.response.data.error.message)
       }
       }
-
+//test
 export const fetchNoteData = async () => {
   try {
-    let NoteItems = []
-    const response = await fetch(environment.readAllNote)
-    const res = await response.json();
-    NoteItems = res
-    return NoteItems
-  } catch( error) {
-    console.log(error);
+    const idToken = await AsyncStorage.getItem('@idToken')
+    if(idToken !== null ) {
+      const urlLink = `${environment.readAllNote}`
+      let NoteItems = []
+      const response = await fetch(environment.readAllNote, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${idToken}`
+        }
+      })
+      const res = await response.json();
+      NoteItems = res
+      return NoteItems
+    }
+  } catch (error) {
+    console.log(error.response.data.error.message)
   }
 }
+//done
 export const fetchProjectNoteData = async (projectId) => {
-  const urlLink = `${environment.readProjectNotesByProjectId}/${projectId.projectId}`;
   try {
-    let NoteItems =  []
-    const response = await fetch(urlLink)
-    console.log('response', response)
-    const res = await response.json();
-    console.log('res', res)
-    NoteItems = res
-    return NoteItems
+    const urlLink = `${environment.readProjectNotesByProjectId}/${projectId.projectId}`;
+    console.log(urlLink)
+    const value = await AsyncStorage.getItem('@idToken')
+    console.log(value)
+      if(value !== null) {
+       let Items =  []
+        const response = await fetch(urlLink, {
+        method : 'GET',
+        headers: {
+          Authorization: `Bearer ${value}`,
+        }
+      })
+      const res = await response.json()
+      Items = res
+      console.log('Items', Items)
+      return Items
     }
-     catch (error) {
-      console.log(error);
-    }
-}
-
+  } catch (error) {
+        console.log(error.response.data.error.message)
+      }
+      }
+  
+//done
 export const createData = async (name) => {
   try {
     const token = await AsyncStorage.getItem('@idToken')
@@ -76,71 +94,128 @@ export const createData = async (name) => {
       }
     }
 
-  export const createNoteData = async (projectId, title, text) => {
+  export const createNoteData = async (projectId, title, text, uid) => {
     try {
-      const res = await fetch(environment.createNote, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        projectId : projectId.projectId,
-        title: title.title,
-        text: text.text  
-      })
-      })
-    }catch(error) {
-      console.log(error)
-    }}
+      const token = await AsyncStorage.getItem('@idToken')
+        if(token !== null) {
+          const urlLink = `${environment.createNote}`
+         let Items =  []
+          const response = await fetch(urlLink, {
+            method: 'POST', 
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            projectId : projectId.projectId,
+            title: title.title,
+            text: text.text,
+            uid: uid.uid
+          })
+          })
+        const res = await response.json()
+        Items = res
+        return Items
+      }
+    } catch (error) {
+          console.log(error.response.data.error.message)
+        }
+      }
 
 
-  
+      //done
     export const updateProjectData = async (id, hours, date) => {
-      const urlLink = `${environment.workinDay}/${id.id}`;
-      const res =  await fetch(urlLink, {
-        method: 'PATCH',
-        headers: {
-          Accept: 'application/json',
+      try {
+        const token = await AsyncStorage.getItem('@idToken')
+          if(token !== null) {
+            const urlLink = `${environment.workinDay}/${id.id}`;
+            console.log(urlLink)
+            console.log(token)
+          let Items =  []
+          const response = await fetch(urlLink, {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Bearer ${token}`,
+           Accept: 'application/json',
           'Content-Type': 'application/json',
       },
       body: JSON.stringify({
           hours: hours.hours,
           date: date.date
       })
-      
       })
-    } 
+      const res = await response.json()
+      console.log(res)
+        Items = res
+        console.log('Item', Items)
+        return Items
+   }
+  } catch (error) {
+    console.log(error.response.data.error.message)
+  }
+}
+//test
     export const updateProjectNoteData = async(id, title, text) => {
-      const urlLink = `${environment.updateProjectNote}/${id.id}`
-      const res = await fetch(urlLink, {
-        method:'PATCH',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+      try {
+        const token = await AsyncStorage.getItem('@idToken')
+          if(token !== null) {
+            const urlLink = `${environment.updateProjectNote}/${id.id}`
+            console.log(urlLink)
+            console.log(token)
+            let Items =  []
+             const response = await fetch(urlLink, {
+            method:'PUT',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: 'application/json',
+             'Content-Type': 'application/json',
       }, 
       body : JSON.stringify({
         title: title.title,
         text: text.text
       })
-
       })
+          const res = await response.json()
+          console.log(res)
+           Items = res
+            console.log('Item', Items)
+           return Items
     }
+  } catch (error) {
+    console.log(error.response.data.error.message)
+  }
+}
+//done
     export const getDataWithId = async(id) => {
-      const urlLink = `${environment.readById}/${id.id}`
       try {
-        let Items =  []
-        const response = await fetch(urlLink)
-        console.log('resposne',response)
-        const res = await response.json();
-        console.log('res', res)
+        const token = await AsyncStorage.getItem('@idToken')
+          if(token !== null) {
+            const urlLink = `${environment.readById}/${id.id}`
+            console.log(urlLink)
+            console.log(token)
+          let Items =  []
+          const response = await fetch(urlLink, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+           Accept: 'application/json',
+          'Content-Type': 'application/json',
+      },
+     
+      })
+      const res = await response.json()
+      console.log(res)
         Items = res
+        console.log('Item', Items)
         return Items
-        }
-         catch (error) {
-          console.log(error);
-        }
+   }
+  } catch (error) {
+    console.log(error.response.data.error.message)
+  }
     }
+
+    //??
     export const getProjectNotesDataWithId= async(id) => {
       const urlLink = `${environment.readProjectNotesById}/${id.id}`
       try {
@@ -156,6 +231,51 @@ export const createData = async (name) => {
         console.log(error);
       }
     }
+    //delete prokjectNote
+    export const deleteProjectNotesData = async(id) => {
+      try {
+        const idToken = await AsyncStorage.getItem('@idToken')
+        if(idToken !== null) {
+          const urlLink = `${environment.deleteProjectNote}/${id.id}`
+          console.log(urlLink)
+          const res = await fetch(urlLink, {
+            method: 'DELETE',
+            headers: {
+              Authorization: `Bearer ${idToken}`
+            }
+          })
+          const response = await res.json()
+          console.log(response)
+        }
+      }
+      catch (error) {
+        console.log(error.response.data.error.message)
+      }
+     
+    }
+
+    export const deleteProjectData = async(id) => {
+      console.log('id', id.id)
+      try {
+        const idToken = await AsyncStorage.getItem('@idToken')
+        if(idToken !== null) {
+          const urlLink = `${environment.deleteProject}/${id.id}`
+          console.log('urlink',urlLink)
+          const res= await fetch(urlLink, {
+            method: 'DELETE',
+            headers: {
+              Authorization: `Bearer ${idToken}`
+            }
+          })
+          const response = await res.json()
+          console.log(response)
+        }
+      }
+      catch (error) {
+        console.log(error.response.data.error.message)
+      }
+    }
+   
 
 export const environment = {
     create: 'https://us-central1-dpopt-a5acd.cloudfunctions.net/project/api/create',
@@ -166,7 +286,9 @@ export const environment = {
     readAllNote: 'https://us-central1-dpopt-a5acd.cloudfunctions.net/projectNote/api/read/notes',
     readProjectNotesByProjectId : 'https://us-central1-dpopt-a5acd.cloudfunctions.net/projectNote/api/read/notes',
     readProjectNotesById : 'https://us-central1-dpopt-a5acd.cloudfunctions.net/projectNote/api/read/note',
-    updateProjectNote: 'https://us-central1-dpopt-a5acd.cloudfunctions.net/projectNote/api/update/note'
+    updateProjectNote: 'https://us-central1-dpopt-a5acd.cloudfunctions.net/projectNote/api/update/note',
+    deleteProjectNote: 'https://us-central1-dpopt-a5acd.cloudfunctions.net/projectNote/delete',
+    deleteProject: 'https://us-central1-dpopt-a5acd.cloudfunctions.net/project/api/delete'
 
     
 };

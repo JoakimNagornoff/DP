@@ -2,7 +2,6 @@ import {LOGIN_USER_SUCCESS, LOGIN_USER_FAILED , UserState , UserActionTypes, ID_
 
 const initialState : UserState = {
     data: [],
-    idToken: ''
 }
 
 const userReducer = (

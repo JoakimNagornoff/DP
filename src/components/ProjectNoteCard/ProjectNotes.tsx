@@ -52,13 +52,14 @@ class ProjectNotes extends Component<Props, State> {
 
     render() {
       const {navigate} = this.props.navigation;
-
+      if (!this.props.notes) {
+        return <Text>Error notes project</Text>;
+      }
         return (
             <View style={style.container}>
               {this.props.loading && (
          <ActivityIndicatorExample/>
         )}
-        {console.log(this.props.notes)}
             <FlatList
               data={this.props.notes}
               renderItem={({item}) => (

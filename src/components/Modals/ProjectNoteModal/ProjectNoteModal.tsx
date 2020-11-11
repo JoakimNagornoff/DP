@@ -5,6 +5,7 @@ import {connect, ConnectedProps} from 'react-redux';
 import BackButton from 'components/BackButton/BackButton';
 import {closeModal, hideModalProjectNote} from 'store/actions/Modals/action'
 import {AddNewProjectNote} from 'store/actions/ProjectNotes/action'
+import { firebase } from '@react-native-firebase/auth';
 
 
 interface State {
@@ -21,11 +22,12 @@ class ProjectNoteModal extends Component<Props, State> {
             
         }
     }
-
+//adderar uid till projectnote för att kolla upp om användaren kan deleta
     create() {
         const {title, text} = this.state
-        const projectId = this.props.project?.id    
-        this.props.AddNewProjectNote({projectId},{title}, {text})
+        const projectId = this.props.project?.id  
+        const uid = firebase.auth().currentUser?.uid
+        this.props.AddNewProjectNote({projectId},{title}, {text}, {uid})
         this.props.hideModalProjectNote()
       }
     render() {
@@ -80,7 +82,8 @@ function mapStateToProps(state: RootState, props: OwnProps) {
       project: state.project.data.find(project => project.id === props.route.params.id),
       hours: state.project.chooseHours,
       date: state.project.chooseDate,
-      modal: state.modal
+      modal: state.modal,
+      store: state
     };
   }
   const mapDispatchToProps = {

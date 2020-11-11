@@ -10,7 +10,8 @@ import {
   REQUEST_API_CREATE_PROJECT,
   RECIEVE_API_CREATE_PROJECT,
   REQUEST_API_PROJECT_DATA_WITH_ID,
-  RECIEVE_API_PROJECT_DATA_WITH_ID
+  RECIEVE_API_PROJECT_DATA_WITH_ID,
+  DELETE_PROJECT_SUCCESS
 } from '../actions/Project/types';
 
 const initialState: ProjectState = {
@@ -93,14 +94,24 @@ const projectReducer = (
             }
           }
             case RECIEVE_API_UPDATE_PROJECT: {
+              const workinDay = action.payload;
               return {
                 ...state,
-                data: action.payload,
+                data: state.data.map(project => (
+                  project.id === workinDay.id ? workinDay : project
+                )),
               }
           }
-        
+          case DELETE_PROJECT_SUCCESS: {
+            const deletedProject = action.payload;
+            return {
+              ...state,
+              data: state.data.filter(project => project.id === deletedProject.id)
+            }
+          }
       }
       return state;
+     
 }
   
 

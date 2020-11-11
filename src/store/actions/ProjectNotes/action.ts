@@ -1,17 +1,6 @@
-import { ProjectNoteActionType, ProjectNote, REQUEST_API_NOTE_DATA, RECIEVE_API_NOTE_DATA, REQUEST_API_CREATE_NOTE, REQUEST_API_PROJECT_NOTES, RECIEVE_API_PROJECT_NOTES, REQUEST_UPDATE_API_PROJECT_NOTE, RECIEVE_API_NOTE_BY_ID, REQUEST_API_NOTE_BY_ID} from './types'
+import { ProjectNoteActionType, ProjectNote, REQUEST_API_CREATE_NOTE, REQUEST_API_PROJECT_NOTES, RECIEVE_API_PROJECT_NOTES, REQUEST_UPDATE_API_PROJECT_NOTE, RECIEVE_API_NOTE_BY_ID, REQUEST_API_NOTE_BY_ID, RECIEVE_API_CREATE_NOTE, RECIEVE_UPDATE_API_PROJECT_NOTE, REQUEST_DELETE_PROJECT_NOTE, DELETE_SUCCESS} from './types'
 
-export const requestApiProjectNoteData = () => {
-    return {
-        type: REQUEST_API_NOTE_DATA
-    }
-}
 
-export const recieveApiProjectNoteData = (data: ProjectNote[]) : ProjectNoteActionType => {
-    return {
-        type: RECIEVE_API_NOTE_DATA,
-        payload: data
-    }
-}
 export const requestApiProjectNotesData = (projectId) => {
     return {
         type: REQUEST_API_PROJECT_NOTES,
@@ -19,19 +8,42 @@ export const requestApiProjectNotesData = (projectId) => {
         
     }
 }
-export const recieveApiProjectNotesData = (data: ProjectNote[]) : ProjectNoteActionType => {
+export const recieveApiProjectNotesData = (data) : ProjectNoteActionType => {
     return {
         type: RECIEVE_API_PROJECT_NOTES,
         payload: data
     }
 }
+export const requestApiCreateProjectNoteData = () => {
+    return {
+        type: REQUEST_API_CREATE_NOTE
+    }
+}
+export const recieveApiCreatedProjectNoteData = (data): ProjectNoteActionType => {
+    return {
+        type: RECIEVE_API_CREATE_NOTE,
+        payload: data
+    }
+}
+export const requestApiUpdateProjectNoteData = () => {
+    return {
+        type: REQUEST_UPDATE_API_PROJECT_NOTE
+    }
+}
+export const recieveApiUpdateProjectNoteData = (data) : ProjectNoteActionType => {
+    return {
+        type:  RECIEVE_UPDATE_API_PROJECT_NOTE,
+        payload: data
+    }
+}
 
-export const AddNewProjectNote = (projectId,title, text,) => {
+export const AddNewProjectNote = (projectId,title, text, uid) => {
     return {
         type: REQUEST_API_CREATE_NOTE,
         projectId,
         title,
-        text
+        text,
+        uid
     }
 }
 
@@ -54,5 +66,19 @@ export const recieveApiNoteById = (data: ProjectNote []) : ProjectNoteActionType
     return {
         type: RECIEVE_API_NOTE_BY_ID,
         payload: data
+    }
+}
+
+export const requestApiDeleteNote = (id) => {
+    return {
+        type: REQUEST_DELETE_PROJECT_NOTE,
+        id
+    }
+}
+export const deleteSuccess = (id) => {
+    return {
+        type: DELETE_SUCCESS,
+        payload: id
+
     }
 }

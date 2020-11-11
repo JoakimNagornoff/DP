@@ -1,4 +1,4 @@
-import { ADD_PROJECT_HOURS,ADD_PROJECT_DATE,REQUEST_API_PROJECT_DATA, RECIEVE_API_PROJECT_DATA, REQUEST_API_CREATE_PROJECT, Project, ProjectActionType, REQUEST_API_UPDATE_PROJECT, RECIEVE_API_UPDATE_PROJECT,  REQUEST_API_PROJECT_DATA_WITH_ID, RECIEVE_API_PROJECT_DATA_WITH_ID, FIREBASE_PROJECT_LIST_LISTENER, RECIEVE_API_CREATE_PROJECT} from './types'
+import { ADD_PROJECT_HOURS,ADD_PROJECT_DATE,REQUEST_API_PROJECT_DATA, RECIEVE_API_PROJECT_DATA, REQUEST_API_CREATE_PROJECT, Project, ProjectActionType, REQUEST_API_UPDATE_PROJECT, RECIEVE_API_UPDATE_PROJECT,  REQUEST_API_PROJECT_DATA_WITH_ID, RECIEVE_API_PROJECT_DATA_WITH_ID, FIREBASE_PROJECT_LIST_LISTENER, RECIEVE_API_CREATE_PROJECT, REQUEST_API_DELETE_PROJECT, DELETE_PROJECT_SUCCESS} from './types'
 
 export const requestApiProjectData = () => {
     return {
@@ -54,9 +54,10 @@ export const requestApiProjectData = () => {
     }
   }
 
-  export const recieveApiUpdateProjectdata =()  => {
+  export const recieveApiUpdateProjectdata =(data) : ProjectActionType => {
     return {
      type: RECIEVE_API_UPDATE_PROJECT,
+     payload: data
     }
   }
 
@@ -73,4 +74,16 @@ export const requestApiProjectData = () => {
     }
   }
 
+  export const requestDeleteProject = (id)  => {
+    return {
+      type: REQUEST_API_DELETE_PROJECT,
+      id
+    }
+  }
  
+  export const deleteProjectSuccess = (id) => {
+    return {
+      type: DELETE_PROJECT_SUCCESS,
+      payload: id
+    }
+  }

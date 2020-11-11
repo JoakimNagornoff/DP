@@ -13,6 +13,9 @@ export const RECIEVE_API_UPDATE_PROJECT = 'RECIEVE_API_UPDATE_PROJECT';
 export const ADD_PROJECT_DATE = 'ADD_PROJECT_DATE';
 export const ADD_PROJECT_HOURS = 'ADD_PROJECT_HOURS'
 
+export const REQUEST_API_DELETE_PROJECT = 'REQUEST_API_DELETE_PROJECT';
+export const DELETE_PROJECT_SUCCESS = 'DELETE_PROJECT_SUCCESS'
+
 export interface Project {
     id: string;
     project : {
@@ -61,7 +64,7 @@ interface recieveApiProjectDataAction {
   
   interface recieveApiUpdateProjectdataAction {
     type: typeof RECIEVE_API_UPDATE_PROJECT;
-    payload: Project[];
+    payload: any;
   }
   interface AddProjectDateAction {
     type: typeof ADD_PROJECT_DATE;
@@ -71,8 +74,14 @@ interface recieveApiProjectDataAction {
     type: typeof ADD_PROJECT_HOURS;
     payload: number;
   }
-
+  interface requestApiDeleteProjectAction {
+    type: typeof REQUEST_API_DELETE_PROJECT
+  }
+  interface deleteProjectSuccessAction {
+    type: typeof DELETE_PROJECT_SUCCESS
+    payload: any
+  }
 
   export type ProjectActionType =
    RequestApiProjectDataAction
-  | recieveApiProjectDataAction |recieveApiUpdateProjectdataAction | requestApiProjectDataAction | AddProjectDateAction | AddProjectHourAction  | requestApiProjectDataWithIdAction | recieveApiProjectDataWithIdAction | requestApiCreateProjectdata |recieveAPiCreateprojectdata 
+  | recieveApiProjectDataAction |recieveApiUpdateProjectdataAction | requestApiProjectDataAction | AddProjectDateAction | AddProjectHourAction  | requestApiProjectDataWithIdAction | recieveApiProjectDataWithIdAction | requestApiCreateProjectdata |recieveAPiCreateprojectdata | requestApiDeleteProjectAction | deleteProjectSuccessAction

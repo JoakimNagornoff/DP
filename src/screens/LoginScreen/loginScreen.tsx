@@ -9,7 +9,7 @@ import {
 import auth, { firebase } from '@react-native-firebase/auth';
 import {connect, ConnectedProps} from 'react-redux';
 import {RootState} from 'store';
-import {AuthLoginUser, AddIdToken} from 'store/actions/Users/action'
+import {AuthLoginUser} from 'store/actions/Users/action'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 class LoginInScreen extends Component<Props, {}> {
   state = {
@@ -85,7 +85,6 @@ function mapStateToProps(state: RootState) {
 }
 const mapDispatchToProps = {
   AuthLoginUser,
-  AddIdToken
 };
 const connector = connect(
   mapStateToProps,

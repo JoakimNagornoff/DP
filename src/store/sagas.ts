@@ -1,9 +1,9 @@
 import {all, call, fork, put, take, takeEvery, takeLatest } from 'redux-saga/effects'
-import {requestApiProjectData, recieveApiProjectData, recieveApiUpdateProjectdata, recieveApiProjectDataWithId, requestApiProjectDataWithId, recieveApiCreatedProjectData} from './actions/Project/action'
-import { REQUEST_API_CREATE_PROJECT, REQUEST_API_PROJECT_DATA, REQUEST_API_PROJECT_DATA_WITH_ID, REQUEST_API_UPDATE_PROJECT } from './actions/Project/types';
-import {requestApiProjectNoteData, recieveApiProjectNoteData, recieveApiProjectNotesData, recieveApiNoteById, } from './actions/ProjectNotes/action'
-import { REQUEST_API_CREATE_NOTE, REQUEST_API_NOTE_DATA, REQUEST_API_PROJECT_NOTES, RECIEVE_API_PROJECT_NOTES, REQUEST_UPDATE_API_PROJECT_NOTE, REQUEST_API_NOTE_BY_ID} from './actions/ProjectNotes/types'
-import {createData, fetchData, fetchNoteData, createNoteData, updateProjectData, fetchProjectNoteData, updateProjectNoteData, getDataWithId, getProjectNotesDataWithId} from '../environments/environment'
+import {requestApiProjectData, recieveApiProjectData, recieveApiUpdateProjectdata, recieveApiProjectDataWithId, requestApiProjectDataWithId, recieveApiCreatedProjectData, deleteProjectSuccess} from './actions/Project/action'
+import { REQUEST_API_CREATE_PROJECT, REQUEST_API_DELETE_PROJECT, REQUEST_API_PROJECT_DATA, REQUEST_API_PROJECT_DATA_WITH_ID, REQUEST_API_UPDATE_PROJECT } from './actions/Project/types';
+import { recieveApiProjectNotesData, recieveApiNoteById, recieveApiCreatedProjectNoteData, recieveApiUpdateProjectNoteData, deleteSuccess, } from './actions/ProjectNotes/action'
+import { REQUEST_API_CREATE_NOTE, REQUEST_API_NOTE_DATA, REQUEST_API_PROJECT_NOTES, RECIEVE_API_PROJECT_NOTES, REQUEST_UPDATE_API_PROJECT_NOTE, REQUEST_API_NOTE_BY_ID, REQUEST_DELETE_PROJECT_NOTE} from './actions/ProjectNotes/types'
+import {deleteProjectData, createData, fetchData, fetchNoteData, createNoteData, updateProjectData, fetchProjectNoteData, updateProjectNoteData, getDataWithId, getProjectNotesDataWithId, deleteProjectNotesData} from '../environments/environment'
 
 
 //get api Projects
@@ -22,8 +22,6 @@ function* createApiData(action) {
     const data = yield call (createData,action.name);
     console.log(data)
     yield put(recieveApiCreatedProjectData(data))
-  // const data = yield call();
-   // yield put(recieveApiProjectData());
   } catch(e) {
     console.log(e)
   }
@@ -52,9 +50,10 @@ function* getApiProjecNoteData(action){
 //create api projectNote
 function* createApiNoteData(action) {
   try {
-    const res = yield createNoteData(action.projectId, action.title, action.text);
-    const data = yield call(fetchNoteData);
-    yield put(recieveApiProjectNotesData(data))
+    const data = yield createNoteData(action.projectId, action.title, action.text, action.uid);
+    console.log('data',data)
+    console.log('action uid', action.uid)
+    yield put(recieveApiCreatedProjectNoteData(data))
 
   }catch(e) {
     console.log(e)
@@ -65,7 +64,7 @@ function* createApiNoteData(action) {
 function* getApiProjectNoteData() {
   try {
     const data = yield call(fetchNoteData);
-    yield put(recieveApiProjectNoteData(data));
+    yield put(recieveApiProjectNotesData(data));
   }catch(e) {
     console.log(e)
   }
@@ -74,18 +73,16 @@ function* getApiProjectNoteData() {
 function* getApiProjectNotesData(action) {
   try {
     const data = yield call (fetchProjectNoteData,action.projectId) ;
-    yield put(recieveApiProjectNoteData(data))
+    yield put(recieveApiProjectNotesData(data))
   }catch(e) {
       console.log(e)
     }
 }
 //update project  data
 function* updateApiProjectData(action) {
-  console.log(action.id)
   try {
-    const res = yield updateProjectData(action.id, action.hours, action.date);
-    const data = yield call(fetchData);
-    yield put(recieveApiProjectData(data));
+    const res = yield call( updateProjectData,action.id, action.hours, action.date);
+    yield put(recieveApiUpdateProjectdata(res));
   } catch(e) {
     console.log(e)
   }
@@ -93,9 +90,30 @@ function* updateApiProjectData(action) {
 //update project notes data
 function* updateApiProjectNote(action) {
   try {
-    const res = yield updateProjectNoteData(action.id, action.title, action.text);
-    const data = yield call(getProjectNotesDataWithId, action.id)
-    yield put(recieveApiNoteById(data))
+    const data = yield call (updateProjectNoteData,action.id, action.title, action.text);
+
+    yield put(recieveApiUpdateProjectNoteData(data))
+  }
+  catch(e) {
+    console.log(e)
+  }
+}
+
+//delete ProjectNote 
+function* deleteApiProjectNote(action) {
+  try {
+    const res = yield call(deleteProjectNotesData, action.id);
+    yield put(deleteSuccess(action.id))
+  }
+  catch(e) {
+    console.log(e)
+  }
+}
+//delete Project 
+function* deleteApiProject (action) {
+  try {
+    const res = yield call(deleteProjectData, action.id);
+    yield put(deleteProjectSuccess(action.id))
   }
   catch(e) {
     console.log(e)
@@ -129,8 +147,13 @@ function* watchgetApiDataWithId() {
 }
 function* watchGetApiProjectNoteWithId(){
   yield takeEvery(REQUEST_API_NOTE_BY_ID, getApiProjecNoteData)
+} 
+function* watchDeleteProjectNote() {
+  yield takeEvery(REQUEST_DELETE_PROJECT_NOTE,deleteApiProjectNote )
 }
-
+function* watchDeleteProject() {
+  yield takeEvery(REQUEST_API_DELETE_PROJECT, deleteApiProject)
+}
 export default function * rootSaga() {
   yield all([
     projectSaga(),
@@ -141,6 +164,8 @@ export default function * rootSaga() {
     watchGetProjectNotes(),
     watchUpdateProjectNote(),
     watchgetApiDataWithId(),
-    watchGetApiProjectNoteWithId()
+    watchGetApiProjectNoteWithId(),
+    watchDeleteProjectNote(),
+    watchDeleteProject()
   ])
 }

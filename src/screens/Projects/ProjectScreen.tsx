@@ -15,6 +15,7 @@ import {RootState} from 'store';
 import {connect, ConnectedProps} from 'react-redux';
 
 import {showModal, showModalProjectNote} from 'store/actions/Modals/action'
+import {requestDeleteProject} from 'store/actions/Project/action'
 import ActivityIndicatorExample from 'components/ActivityIndicatorExample';
 import ProjectNotes from '@components/ProjectNoteCard/ProjectNotes'
 
@@ -22,10 +23,26 @@ import WorkindayList from '@components/WorkinDayList/WorkinDayList'
 import WorkinDayModal from '@components/Modals/WorkinDayModal';
 import ProjectNoteModal from 'components/Modals/ProjectNoteModal';
 
+interface State {
+  id: string
+}
 
-class ProjectScreen extends Component<Props, {}> {
+class ProjectScreen extends Component<Props,State, {}> {
   constructor(props: Props) {
     super(props);
+    this.state = {
+      id: props.route.params.id
+    }
+  }
+
+
+  handleDeleteProject() {
+    const {id} = this.state
+    if(id !== null) {
+      this.props.requestDeleteProject({id})
+    }
+    this.props.navigation.goBack()
+
   }
 
   render() {
@@ -57,7 +74,11 @@ class ProjectScreen extends Component<Props, {}> {
             }}>
             <Text style={style.textAddButton}>Lägg till</Text>
           </TouchableOpacity>
+          <TouchableOpacity  style={style.addButton} onPress={() => {
+          this.handleDeleteProject();
+        }}><Text>TA BORT MIG</Text></TouchableOpacity>
         </View> 
+       
       
     <WorkinDayModal route={this.props.route} ></WorkinDayModal>
     <ProjectNoteModal route={this.props.route}></ProjectNoteModal>
@@ -74,7 +95,8 @@ function mapStateToProps(state: RootState, props: OwnProps) {
 }
 const mapDispatchToProps = {
   showModal,
-  showModalProjectNote
+  showModalProjectNote,
+  requestDeleteProject
 
 
 };
@@ -111,6 +133,7 @@ const style = StyleSheet.create({
     textAlign: 'center',
     backgroundColor: '#add8e6',
     marginEnd: 10,
+    marginStart: 10
   },
 
   headerTitle: {
