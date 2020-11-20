@@ -22,14 +22,10 @@ componentDidMount() {
  
 }
   handleLogin = async () => {
-  
       const {email, password} = this.state
       await firebase.auth().signInWithEmailAndPassword(email, password).then(data => {
         if(data.user)
-
       console.log(data)
-      
-  
     })
     this.props.navigation.navigate('Home')
   }
@@ -37,8 +33,9 @@ componentDidMount() {
     firebase.auth().onAuthStateChanged(user => {
       if(user){
         firebase.auth().currentUser?.getIdToken(true).then(function(idToken){
-
+          console.log(idToken)
           AsyncStorage.setItem('@idToken', idToken)
+         // console.log(idToken)
         
         })       
         this.props.navigation.navigate('Home')

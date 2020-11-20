@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 import {View, Text, FlatList, TouchableOpacity, StyleSheet} from 'react-native'
 import { connect, ConnectedProps } from 'react-redux';
 import { ApplicationState } from 'store';
+import {
+  requestApiProjectData,
+} from 'store/actions/Project/action';
 
 
 function Item({name, id}) {
@@ -13,13 +16,19 @@ function Item({name, id}) {
     );
   }
 
-class ProjectList extends Component <Props> {
+
+class ProjectList extends Component <Props, {}> {
+  handleRefresh() {
+    this.props.requestApiProjectData()
+  }
     render(){
         const {navigate} = this.props.navigation;
         return (
             <View style={style.container}>
             <FlatList
             data={this.props.projects}
+            onRefresh={() => this.handleRefresh()}
+            refreshing={false}     
             renderItem={({item}) => (
               <TouchableOpacity
                 onPress={() =>
@@ -46,9 +55,12 @@ function mapStateToProps(state: ApplicationState, props: OwnProps) {
       projects: state.project.data,
     };
   }
-
+  const mapDispatchToProps = {
+    requestApiProjectData
+  }
   const connector = connect(
     mapStateToProps,
+    mapDispatchToProps
   );
   
   type PropsFromRedux = ConnectedProps<typeof connector>;

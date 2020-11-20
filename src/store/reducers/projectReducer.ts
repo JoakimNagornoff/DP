@@ -11,7 +11,8 @@ import {
   RECIEVE_API_CREATE_PROJECT,
   REQUEST_API_PROJECT_DATA_WITH_ID,
   RECIEVE_API_PROJECT_DATA_WITH_ID,
-  DELETE_PROJECT_SUCCESS
+  DELETE_PROJECT_SUCCESS,
+  DELETE_PROJECT_END_SUCCESS
 } from '../actions/Project/types';
 
 const initialState: ProjectState = {
@@ -106,9 +107,16 @@ const projectReducer = (
             const deletedProject = action.payload;
             return {
               ...state,
-              data: state.data.filter(project => project.id === deletedProject.id)
+              data: state.data.filter(project => project.id !== deletedProject.id)
             }
           }
+          case DELETE_PROJECT_END_SUCCESS: {
+            const EndProject = action.payload;
+            return {
+              ...state,
+              data: state.data.filter(project => project.id !== EndProject.id)
+            }
+          }        
       }
       return state;
      

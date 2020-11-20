@@ -15,7 +15,7 @@ import {RootState} from 'store';
 import {connect, ConnectedProps} from 'react-redux';
 
 import {showModal, showModalProjectNote} from 'store/actions/Modals/action'
-import {requestDeleteProject} from 'store/actions/Project/action'
+import {requestDeleteProject, requestMoveProject} from 'store/actions/Project/action'
 import ActivityIndicatorExample from 'components/ActivityIndicatorExample';
 import ProjectNotes from '@components/ProjectNoteCard/ProjectNotes'
 
@@ -44,6 +44,14 @@ class ProjectScreen extends Component<Props,State, {}> {
     this.props.navigation.goBack()
 
   }
+  handleMoveEndProject() {
+    const {id} = this.state
+    if(id !== null) {
+      this.props.requestMoveProject({id})
+    }
+    this.props.navigation.goBack()
+   
+  }
 
   render() {
     const {navigate} = this.props.navigation;
@@ -53,7 +61,9 @@ class ProjectScreen extends Component<Props,State, {}> {
     const {name, id} = this.props.route.params;
     return (
       <View style={style.container}>
-
+ <TouchableOpacity  style={style.addButton} onPress={() => {
+          this.handleDeleteProject();
+        }}><Text>TA BORT MIG</Text></TouchableOpacity>
       <TouchableOpacity onPress={() => {
        this.props.showModalProjectNote()}}><Text>ADD</Text></TouchableOpacity>
       <View style={style.topMiddleView}>
@@ -74,9 +84,11 @@ class ProjectScreen extends Component<Props,State, {}> {
             }}>
             <Text style={style.textAddButton}>Lägg till</Text>
           </TouchableOpacity>
-          <TouchableOpacity  style={style.addButton} onPress={() => {
-          this.handleDeleteProject();
-        }}><Text>TA BORT MIG</Text></TouchableOpacity>
+
+          <TouchableOpacity onPress={() => {
+            this.handleMoveEndProject();
+          }}><Text>flytta</Text></TouchableOpacity>
+         
         </View> 
        
       
@@ -96,7 +108,8 @@ function mapStateToProps(state: RootState, props: OwnProps) {
 const mapDispatchToProps = {
   showModal,
   showModalProjectNote,
-  requestDeleteProject
+  requestDeleteProject,
+  requestMoveProject
 
 
 };

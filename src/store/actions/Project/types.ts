@@ -16,6 +16,9 @@ export const ADD_PROJECT_HOURS = 'ADD_PROJECT_HOURS'
 export const REQUEST_API_DELETE_PROJECT = 'REQUEST_API_DELETE_PROJECT';
 export const DELETE_PROJECT_SUCCESS = 'DELETE_PROJECT_SUCCESS'
 
+export const REQUEST_API_MOVE_PROJECT_END = 'REQUEST_API_MOVE_PROJECT_END';
+export const DELETE_PROJECT_END_SUCCESS = 'DELETE_PROJECT_END_SUCCESS';
+
 export interface Project {
     id: string;
     project : {
@@ -81,7 +84,14 @@ interface recieveApiProjectDataAction {
     type: typeof DELETE_PROJECT_SUCCESS
     payload: any
   }
+  interface requestApiMoveProjectEndAction {
+    type: typeof REQUEST_API_MOVE_PROJECT_END;
+  }
+  interface deleteProjectEndSuccessAction {
+    type: typeof DELETE_PROJECT_END_SUCCESS
+    payload: any
+  }
 
   export type ProjectActionType =
    RequestApiProjectDataAction
-  | recieveApiProjectDataAction |recieveApiUpdateProjectdataAction | requestApiProjectDataAction | AddProjectDateAction | AddProjectHourAction  | requestApiProjectDataWithIdAction | recieveApiProjectDataWithIdAction | requestApiCreateProjectdata |recieveAPiCreateprojectdata | requestApiDeleteProjectAction | deleteProjectSuccessAction
+  | recieveApiProjectDataAction |recieveApiUpdateProjectdataAction | requestApiProjectDataAction | AddProjectDateAction | AddProjectHourAction  | requestApiProjectDataWithIdAction | recieveApiProjectDataWithIdAction | requestApiCreateProjectdata |recieveAPiCreateprojectdata | requestApiDeleteProjectAction | deleteProjectSuccessAction | requestApiMoveProjectEndAction |deleteProjectEndSuccessAction

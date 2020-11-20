@@ -21,6 +21,29 @@ export const fetchData = async () => {
         console.log(error.response.data.error.message)
       }
       }
+
+
+export const fetchEndProjectData = async () => {
+  try {
+    const value = await AsyncStorage.getItem('@idToken')
+    if(value !== null) {
+      const urlLink = `${environment.readEndProjects}`
+      let endItems = []
+      const response = await fetch(urlLink, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${value}`,
+        }
+      })
+      const res = await response.json()
+      endItems = res
+      return endItems
+    }
+  }
+  catch (error) {
+    console.log(error.response.data.error.message)
+  }
+}
 //test
 export const fetchNoteData = async () => {
   try {
@@ -275,7 +298,49 @@ export const createData = async (name) => {
         console.log(error.response.data.error.message)
       }
     }
+    export const endProjectData = async(id) => {
+      try {
+        const idToken = await AsyncStorage.getItem('@idToken')
+        if(idToken !== null) {
+          const urlink = `${environment.endProject}/${id.id}`
+          console.log(urlink)
+          const res = await fetch(urlink, {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${idToken}`
+            }
+          })
+          const response = await res.json()
+         return response
+        }
+      } 
+      catch (error) {
+        console.log(error.response.data.error.message)
+      }
+    }
    
+
+    export const deleteEndProjectData = async(id) => {
+      console.log('id', id.id)
+      try {
+        const idToken = await AsyncStorage.getItem('@idToken')
+        if(idToken !== null) {
+          const urlLink = `${environment.deleteEndProject}/${id.id}`
+          console.log('urlink',urlLink)
+          const res= await fetch(urlLink, {
+            method: 'DELETE',
+            headers: {
+              Authorization: `Bearer ${idToken}`
+            }
+          })
+          const response = await res.json()
+          console.log(response)
+        }
+      }
+      catch (error) {
+        console.log(error.response.data.error.message)
+      }
+    }
 
 export const environment = {
     create: 'https://us-central1-dpopt-a5acd.cloudfunctions.net/project/api/create',
@@ -288,7 +353,10 @@ export const environment = {
     readProjectNotesById : 'https://us-central1-dpopt-a5acd.cloudfunctions.net/projectNote/api/read/note',
     updateProjectNote: 'https://us-central1-dpopt-a5acd.cloudfunctions.net/projectNote/api/update/note',
     deleteProjectNote: 'https://us-central1-dpopt-a5acd.cloudfunctions.net/projectNote/delete',
-    deleteProject: 'https://us-central1-dpopt-a5acd.cloudfunctions.net/project/api/delete'
+    deleteProject: 'https://us-central1-dpopt-a5acd.cloudfunctions.net/project/api/delete',
+    endProject : 'https://us-central1-dpopt-a5acd.cloudfunctions.net/project/api/move',
+    readEndProjects: 'https://us-central1-dpopt-a5acd.cloudfunctions.net/project/api/read/endProjects',
+    deleteEndProject: 'https://us-central1-dpopt-a5acd.cloudfunctions.net/project/api/endProjects/delete'
 
     
 };

@@ -17,18 +17,16 @@ import {
   requestApiProjectDataWithId
 } from 'store/actions/Project/action';
 import {
-  requestApiProjectNoteData
 } from 'store/actions/ProjectNotes/action'
 import ActivityIndicatorExample from 'components/ActivityIndicatorExample';
 import ProjectList from '@components/ProjectList/ProjectList'
 import firestore, { firebase } from '@react-native-firebase/firestore';
 import {showProjectModal} from 'store/actions/Modals/action'
 import ProjectModal from 'components/Modals/ProjectModal/ProjectModal';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 interface State {
-  show: boolean;
   name: string;
-  test: boolean
 
 }
 
@@ -36,15 +34,11 @@ class HomeScreen extends Component<Props, State, {}> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      show: false,
       name: '',
-      test: false
     };
   }
-  componentDidMount() {
-    this.props.requestApiProjectData()
-  }
 
+  //firebase listener test
    firebaseTest ()  {
       const id = [];
     const docs = this.props.project
@@ -89,20 +83,26 @@ class HomeScreen extends Component<Props, State, {}> {
   }
   render() {
     const {navigate} = this.props.navigation;
+    if(!this.props.project) {
+      return <Text>Dra för att ladda project</Text>
+  }
+    
     return (
+     
+    
       <View style={style.container}>
+        
         {this.props.loading && (
-          <Text>loading</Text>
+         <ActivityIndicatorExample></ActivityIndicatorExample>
         )}
       
-       
      <ProjectList navigation={this.props.navigation}></ProjectList>
        <ProjectModal route={this.props.route}></ProjectModal>
         
         <View style={style.middleContainer}></View>
         <View style={style.bottomContainer}>
   
-        <TouchableOpacity  style={style.notesSceenButton} onPress={() => {this.props.showProjectModal()}}><Text>TEST</Text></TouchableOpacity>
+        <TouchableOpacity  style={style.notesSceenButton} onPress={() => {this.props.showProjectModal()}}><Text>Lägg till Project</Text></TouchableOpacity>
         </View>
         </View>
 
@@ -125,7 +125,6 @@ function mapStateToProps(state: ApplicationState) {
 const mapDispatchToProps = {
   requestApiProjectData,
   AddNewProject,
-  requestApiProjectNoteData,
   requestApiProjectDataWithId,
   showProjectModal
   

@@ -1,9 +1,11 @@
 import {all, call, fork, put, take, takeEvery, takeLatest } from 'redux-saga/effects'
-import {requestApiProjectData, recieveApiProjectData, recieveApiUpdateProjectdata, recieveApiProjectDataWithId, requestApiProjectDataWithId, recieveApiCreatedProjectData, deleteProjectSuccess} from './actions/Project/action'
-import { REQUEST_API_CREATE_PROJECT, REQUEST_API_DELETE_PROJECT, REQUEST_API_PROJECT_DATA, REQUEST_API_PROJECT_DATA_WITH_ID, REQUEST_API_UPDATE_PROJECT } from './actions/Project/types';
+import {requestApiProjectData, recieveApiProjectData, recieveApiUpdateProjectdata, recieveApiProjectDataWithId, requestApiProjectDataWithId, recieveApiCreatedProjectData, deleteProjectSuccess, deleteProjectEndSuccess} from './actions/Project/action'
+import { REQUEST_API_CREATE_PROJECT, REQUEST_API_DELETE_PROJECT, REQUEST_API_MOVE_PROJECT_END, REQUEST_API_PROJECT_DATA, REQUEST_API_PROJECT_DATA_WITH_ID, REQUEST_API_UPDATE_PROJECT } from './actions/Project/types';
 import { recieveApiProjectNotesData, recieveApiNoteById, recieveApiCreatedProjectNoteData, recieveApiUpdateProjectNoteData, deleteSuccess, } from './actions/ProjectNotes/action'
 import { REQUEST_API_CREATE_NOTE, REQUEST_API_NOTE_DATA, REQUEST_API_PROJECT_NOTES, RECIEVE_API_PROJECT_NOTES, REQUEST_UPDATE_API_PROJECT_NOTE, REQUEST_API_NOTE_BY_ID, REQUEST_DELETE_PROJECT_NOTE} from './actions/ProjectNotes/types'
-import {deleteProjectData, createData, fetchData, fetchNoteData, createNoteData, updateProjectData, fetchProjectNoteData, updateProjectNoteData, getDataWithId, getProjectNotesDataWithId, deleteProjectNotesData} from '../environments/environment'
+import {fetchEndProjectData,endProjectData,deleteProjectData, createData, fetchData, fetchNoteData, createNoteData, updateProjectData, fetchProjectNoteData, updateProjectNoteData, getDataWithId, getProjectNotesDataWithId, deleteProjectNotesData, deleteEndProjectData} from '../environments/environment'
+import { deleteProjectEndEDSuccess, recieveApiEndProjectData, movedEndProjectSuccess } from './actions/EndsProject/action';
+import { REQUEST_API_ENDPROJECT_DATA, REQUEST_API_ENDPROJECT_DELETE } from './actions/EndsProject/types';
 
 
 //get api Projects
@@ -14,6 +16,14 @@ function* getApiData() {
    } catch (e) {
      console.log(e);
    }
+}
+function* getApiEndProjectData() {
+  try {
+    const data = yield call(fetchEndProjectData)
+    yield put(recieveApiEndProjectData(data))
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 //create api project
@@ -119,6 +129,25 @@ function* deleteApiProject (action) {
     console.log(e)
   }
 }
+function* moveApiEndProject (action) {
+  try {
+    const res = yield call(endProjectData, action.id);
+    yield put(deleteProjectEndSuccess(action.id))
+    yield put(movedEndProjectSuccess(res))
+  }
+  catch(e) {
+    console.log(e)
+  }
+}
+function* deleteEndProject(action) {
+  try {
+    const res = yield call(deleteEndProjectData, action.id);
+    yield put(deleteProjectEndEDSuccess(action.id))
+  }
+  catch(e) {
+    console.log(e)
+  }
+}
 
 
 function* projectSaga() {
@@ -154,6 +183,15 @@ function* watchDeleteProjectNote() {
 function* watchDeleteProject() {
   yield takeEvery(REQUEST_API_DELETE_PROJECT, deleteApiProject)
 }
+function* watchMoveEndProject() {
+  yield takeEvery(REQUEST_API_MOVE_PROJECT_END, moveApiEndProject)
+}
+function* watchGetEndProjects() {
+  yield takeEvery(REQUEST_API_ENDPROJECT_DATA, getApiEndProjectData)
+}
+function* watchDeleteEndProject() {
+  yield takeEvery(REQUEST_API_ENDPROJECT_DELETE, deleteEndProject)
+}
 export default function * rootSaga() {
   yield all([
     projectSaga(),
@@ -166,6 +204,9 @@ export default function * rootSaga() {
     watchgetApiDataWithId(),
     watchGetApiProjectNoteWithId(),
     watchDeleteProjectNote(),
-    watchDeleteProject()
+    watchDeleteProject(),
+    watchMoveEndProject(),
+    watchGetEndProjects(),
+    watchDeleteEndProject()
   ])
 }

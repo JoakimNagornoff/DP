@@ -1,15 +1,10 @@
 import React, { Component } from 'react';
-import { FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import formdateDate from 'components/DatePickerModal/components/formdateDate/formatDate';
-import shortenString from '@components/DatePickerModal/components/shortenString/shortenString';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
 import { ApplicationState } from 'store';
 import ActivityIndicatorExample from 'components/ActivityIndicatorExample';
 
-import BackButton from 'components/BackButton/BackButton';
 import {AddNewProjectNote, requestApiProjectNotesData, requestApiNoteByid} from 'store/actions/ProjectNotes/action'
-import firestore from '@react-native-firebase/firestore';
 
 
 function ItemNote({title, text}) {
@@ -21,7 +16,6 @@ function ItemNote({title, text}) {
     );
   }
   interface State {
-    addNoteShow: boolean
     title: string
     text: string
   }
@@ -30,26 +24,15 @@ class ProjectNotes extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      addNoteShow: false,
       title: '',
-      text: ''
+      text: '',
     }
   }
-  componentDidMount() {
-    this.test()
-  }
-  test () {
-    const projectId= this.props.project?.id
+
+  handleRefresh () {
+  const projectId= this.props.project?.id
    this.props.requestApiProjectNotesData({projectId})
   }
-
-  
-  CloseNoteShow() {
-    this.setState({
-      addNoteShow: false,
-    });
-  }
-
     render() {
       const {navigate} = this.props.navigation;
       if (!this.props.notes) {
@@ -62,6 +45,8 @@ class ProjectNotes extends Component<Props, State> {
         )}
             <FlatList
               data={this.props.notes}
+              onRefresh={() => this.handleRefresh()}
+              refreshing={false}
               renderItem={({item}) => (
                 <TouchableOpacity
                   onPress={() =>
