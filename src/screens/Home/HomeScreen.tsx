@@ -38,49 +38,6 @@ class HomeScreen extends Component<Props, State, {}> {
     };
   }
 
-  //firebase listener test
-   firebaseTest ()  {
-      const id = [];
-    const docs = this.props.project
-
-    for(const doc of docs){
-      const selectedProjects = {
-        id : doc.id
-      }
-      id.push(selectedProjects)
-      console.log('id array',id)
-    }
-     let addedId = ''
-   firestore().collection('Projects')
-  .onSnapshot(querySnapshot => {
-    querySnapshot.docChanges().forEach(change => {
-      if (change.type === 'added') {
-        if(change.doc.id){
-          addedId = ''
-        }
-        else {
-          addedId = change.doc.id
-        }  
-      }
-      if(change.type === 'modified') {
-        if(change.doc.exists){
-          addedId = ''
-        } else {
-          addedId = change.doc.id
-        }
-      }
-      if(change.type ==='removed'){
-        console.log('Removed Project: ', change.doc.data());
-          
-      }
-    });
-    const id = addedId
-    console.log(id)
-    this.props.requestApiProjectDataWithId({id})
-    addedId = ''
-  });
-  
-  }
   render() {
     const {navigate} = this.props.navigation;
     if(!this.props.project) {

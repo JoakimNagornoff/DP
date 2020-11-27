@@ -40,7 +40,7 @@ function* createApiData(action) {
 function* getApiDataWithId(action) {
   try {
     const data = yield call(getDataWithId, action.id);
-    yield put(recieveApiProjectData(data))
+    yield put(recieveApiProjectDataWithId(data))
   }
   catch(e) {
     console.log(e)
@@ -101,7 +101,6 @@ function* updateApiProjectData(action) {
 function* updateApiProjectNote(action) {
   try {
     const data = yield call (updateProjectNoteData,action.id, action.title, action.text);
-
     yield put(recieveApiUpdateProjectNoteData(data))
   }
   catch(e) {

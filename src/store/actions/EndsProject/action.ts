@@ -1,4 +1,4 @@
-import {REQUEST_API_ENDPROJECT_DATA, RECIEVE_API_ENDPROJECT_DATA, EndProject, EndProjectActionType, REQUEST_API_ENDPROJECT_DELETE, DELETE_API_ENDPORJECT_SUCCESS, MOVED_API_ENDPROJECT_SUCCESS} from './types'
+import {REQUEST_API_ENDPROJECT_DATA, RECIEVE_API_ENDPROJECT_DATA, EndProject, EndProjectActionType, REQUEST_API_ENDPROJECT_DELETE, DELETE_API_ENDPORJECT_SUCCESS, MOVED_API_ENDPROJECT_SUCCESS, FIREBASE_LISTENER_ENDPROJECT} from './types'
 
 export const requestApiEndProjectData = () => {
     return {
@@ -29,6 +29,12 @@ export const deleteProjectEndEDSuccess = (id) => {
   export const movedEndProjectSuccess = (data) => {
       return {
           type: MOVED_API_ENDPROJECT_SUCCESS,
+          payload: data
+      }
+  }
+  export const firebaseListenerEndProject = (data) => {
+      return {
+          type: FIREBASE_LISTENER_ENDPROJECT,
           payload: data
       }
   }

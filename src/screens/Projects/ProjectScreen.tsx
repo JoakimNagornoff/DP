@@ -3,29 +3,27 @@ import {
   View,
   Text,
   StyleSheet,
-  Modal,
-  TextInput,
+
   TouchableOpacity,
-  Button,
-  FlatList,
-  Platform,
-  UIManager,
+
+  Dimensions,
 } from 'react-native';
 import {RootState} from 'store';
 import {connect, ConnectedProps} from 'react-redux';
 
 import {showModal, showModalProjectNote} from 'store/actions/Modals/action'
 import {requestDeleteProject, requestMoveProject} from 'store/actions/Project/action'
-import ActivityIndicatorExample from 'components/ActivityIndicatorExample';
 import ProjectNotes from '@components/ProjectNoteCard/ProjectNotes'
 
 import WorkindayList from '@components/WorkinDayList/WorkinDayList'
 import WorkinDayModal from '@components/Modals/WorkinDayModal';
 import ProjectNoteModal from 'components/Modals/ProjectNoteModal';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 interface State {
   id: string
 }
+var { width, height } = Dimensions.get('window');
 
 class ProjectScreen extends Component<Props,State, {}> {
   constructor(props: Props) {
@@ -64,30 +62,36 @@ class ProjectScreen extends Component<Props,State, {}> {
  <TouchableOpacity  style={style.addButton} onPress={() => {
           this.handleDeleteProject();
         }}><Text>TA BORT MIG</Text></TouchableOpacity>
-      <TouchableOpacity onPress={() => {
-       this.props.showModalProjectNote()}}><Text>ADD</Text></TouchableOpacity>
+        <View style={{flexDirection: "row-reverse"}}>
+      <TouchableOpacity style={style.addNoteButton} onPress={() => {
+       this.props.showModalProjectNote()}}><Icon name="plus-circle" size={35} /></TouchableOpacity>
+       </View>
+       <View style={{flexDirection: "row"}}>
+      <Text>Project Antekningar {this.props.project.project.name}</Text>
+        </View>
       <View style={style.topMiddleView}>
-      <Text>Project Notes</Text>
       <ProjectNotes navigation={this.props.navigation}  route={this.props.route}/>
       </View>
+     
+      <View style={{flexDirection: "row-reverse"}}>
+      <TouchableOpacity
+            style={style.addNoteButton}
+            onPress={() => {
+              this.props.showModal();
+            }}>
+           <Icon name="plus-circle" size={35} />
+          </TouchableOpacity>
+       </View>
       <View style={style.topMiddleView}>
       <Text>Arbetsdagar</Text>
       <WorkindayList  route={this.props.route} />
       </View>
 
 
-      <View style={style.bottomView}>
-          <TouchableOpacity
-            style={style.addButton}
-            onPress={() => {
-              this.props.showModal();
-            }}>
-            <Text style={style.textAddButton}>Lägg till</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => {
+      <View style={style.overlay}>
+          <TouchableOpacity style={style.addButton} onPress={() => {
             this.handleMoveEndProject();
-          }}><Text>flytta</Text></TouchableOpacity>
+          }}><Text style={style.textAddButton}>Avsluta projekt</Text></TouchableOpacity>
          
         </View> 
        
@@ -148,10 +152,15 @@ const style = StyleSheet.create({
     marginEnd: 10,
     marginStart: 10
   },
+  headerNotes: {
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
 
   headerTitle: {
     textAlign: 'center',
-    fontSize: 28,
+    fontSize: 18,
     fontWeight: 'bold',
   },
   dateButton: {
@@ -164,10 +173,7 @@ const style = StyleSheet.create({
   },
 
   addNoteButton: {
-    width: 60,
-    height: 40,
     alignSelf: 'flex-end',
-    borderWidth: 2,
     marginRight: 10,
   },
   addNoteButtonText: {
@@ -205,7 +211,15 @@ const style = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     padding: 5,
-  }
+  },
+  overlay: {
+    marginTop: 5,
+    flex: 0.2,
+    position:'relative',
+    left: 0,
+    top: 0,
+    width: width
+  }  
 });
 
 export default connector(ProjectScreen);

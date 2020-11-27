@@ -18,6 +18,8 @@ export const DELETE_PROJECT_SUCCESS = 'DELETE_PROJECT_SUCCESS'
 
 export const REQUEST_API_MOVE_PROJECT_END = 'REQUEST_API_MOVE_PROJECT_END';
 export const DELETE_PROJECT_END_SUCCESS = 'DELETE_PROJECT_END_SUCCESS';
+export const FIREBASE_LISTENER = 'FIREBASE_LISTENER';
+export const FIREBASE_LISTENER_MODIFIED = 'FIREBASE_LISTENER_MODIFIED';
 
 export interface Project {
     id: string;
@@ -40,8 +42,8 @@ export interface Project {
   }
 
 
-  interface requestApiProjectDataWithIdAction {
-    type: typeof REQUEST_API_PROJECT_DATA_WITH_ID
+interface requestApiProjectDataWithIdAction {
+  type: typeof REQUEST_API_PROJECT_DATA_WITH_ID
   }
 interface recieveApiProjectDataWithIdAction {
   type: typeof RECIEVE_API_PROJECT_DATA_WITH_ID
@@ -91,7 +93,15 @@ interface recieveApiProjectDataAction {
     type: typeof DELETE_PROJECT_END_SUCCESS
     payload: any
   }
+  interface firebaseListenerAction{
+    type: typeof FIREBASE_LISTENER
+    payload: any
+  }
+  interface firebaseListenerModifiedAction {
+    type: typeof FIREBASE_LISTENER_MODIFIED
+    payload: any
+  }
 
   export type ProjectActionType =
    RequestApiProjectDataAction
-  | recieveApiProjectDataAction |recieveApiUpdateProjectdataAction | requestApiProjectDataAction | AddProjectDateAction | AddProjectHourAction  | requestApiProjectDataWithIdAction | recieveApiProjectDataWithIdAction | requestApiCreateProjectdata |recieveAPiCreateprojectdata | requestApiDeleteProjectAction | deleteProjectSuccessAction | requestApiMoveProjectEndAction |deleteProjectEndSuccessAction
+  | recieveApiProjectDataAction |recieveApiUpdateProjectdataAction | requestApiProjectDataAction | AddProjectDateAction | AddProjectHourAction  | requestApiProjectDataWithIdAction | recieveApiProjectDataWithIdAction | requestApiCreateProjectdata |recieveAPiCreateprojectdata | requestApiDeleteProjectAction | deleteProjectSuccessAction | requestApiMoveProjectEndAction |deleteProjectEndSuccessAction | firebaseListenerAction | firebaseListenerModifiedAction

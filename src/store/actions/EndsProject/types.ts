@@ -5,6 +5,7 @@ export const REQUEST_API_ENDPROJECT_DELETE = 'REQUEST_API_ENDPROJECT_DELETE';
 export const DELETE_API_ENDPORJECT_SUCCESS = 'DELETE_API_ENDPORJECT_SUCCESS';
 
 export const MOVED_API_ENDPROJECT_SUCCESS = 'MOVED_API_ENDPROJECT_SUCCESS';
+export const FIREBASE_LISTENER_ENDPROJECT = 'FIREBASE_LISTENER_ENDPROJECT';
 
 export interface EndProject {
     id: string;
@@ -38,6 +39,10 @@ interface movedApiEndProjectSuccessAction {
     type: typeof MOVED_API_ENDPROJECT_SUCCESS
     payload: any
 }
+interface firebaseListenerEndProjectAction {
+    type: typeof FIREBASE_LISTENER_ENDPROJECT
+    payload: any
+}
 
 
-export type EndProjectActionType = requestApiEndProjectDataAction | recieveApiEndProjectDataAction | requestApiEndProjectDeleteAction |deleteApiEndProjectSuccess | movedApiEndProjectSuccessAction
+export type EndProjectActionType = requestApiEndProjectDataAction | recieveApiEndProjectDataAction | requestApiEndProjectDeleteAction |deleteApiEndProjectSuccess | movedApiEndProjectSuccessAction | firebaseListenerEndProjectAction

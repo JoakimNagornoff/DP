@@ -28,7 +28,6 @@ class ProjectNotes extends Component<Props, State> {
       text: '',
     }
   }
-
   handleRefresh () {
   const projectId= this.props.project?.id
    this.props.requestApiProjectNotesData({projectId})
@@ -43,6 +42,11 @@ class ProjectNotes extends Component<Props, State> {
               {this.props.loading && (
          <ActivityIndicatorExample/>
         )}
+        {this.props.notes.length === 0 && (
+          <Text style={style.textAddButton}>Dra för att ladda notes</Text>
+        )}
+        {console.log('test',this.props.notes.length)}
+       
             <FlatList
               data={this.props.notes}
               onRefresh={() => this.handleRefresh()}
@@ -73,9 +77,7 @@ function mapStateToProps(state: ApplicationState, props : OwnProps) {
     return {
       store: state,
       loading: state.project.loading,
-      notes: state.projectNote.data,
-
-     
+      notes: state.projectNote.data.filter(note => note.note.projectId === props.route.params.id),
       project: state.project.data.find(project => project.id === props.route.params.id),
     };
   }
@@ -130,8 +132,7 @@ function mapStateToProps(state: ApplicationState, props : OwnProps) {
     },
     textAddButton: {
       textAlign: 'center',
-      fontSize: 18,
-      fontWeight: 'bold',
+      fontSize: 12,
       padding: 5,
     },
   })

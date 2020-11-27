@@ -5,11 +5,6 @@ import {connect, ConnectedProps} from 'react-redux';
 import BackButton from 'components/BackButton/BackButton';
 import {hideProjectModal} from 'store/actions/Modals/action'
 import {AddNewProject} from 'store/actions/Project/action'
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
-
-
 interface State {
     name: string
 }
@@ -25,6 +20,7 @@ class ProjectModal extends Component<Props, State> {
         const {name} = this.state
         this.props.AddNewProject({name})
        this.props.hideProjectModal()
+       this.setState({name: ''})
       }
       
     render() {

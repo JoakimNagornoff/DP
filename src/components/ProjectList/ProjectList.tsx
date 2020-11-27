@@ -22,6 +22,7 @@ class ProjectList extends Component <Props, {}> {
     this.props.requestApiProjectData()
   }
     render(){
+      console.log(this.props.projects);
         const {navigate} = this.props.navigation;
         return (
             <View style={style.container}>

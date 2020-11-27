@@ -16,6 +16,8 @@ export const RECIEVE_API_NOTE_BY_ID = 'RECIEVE_API_NOTE_BY_ID';
 export const REQUEST_DELETE_PROJECT_NOTE = 'REQUEST_DELETE_PROJECT_NOTE';
 export const DELETE_SUCCESS = 'DELETE_SUCCESS';
 
+export const FIREBASE_NOTE_LISTENER = 'FIREBASE_NOTE_LISTENER';
+
 export interface ProjectNote {
     id: string;
     note: {
@@ -68,5 +70,8 @@ interface deleteSuccessProjectNoteAction {
     type: typeof DELETE_SUCCESS
     payload: any
 }
-
-export type ProjectNoteActionType =   requestApiProjectNotesAction | recieveApiProjectNotesAction | requestApiNoteByIdAction | recieveApiNoteByIdAction | requestApiCreateProjectNoteAction | recieveApiCreatedProjectNoteAction | requestApiUpdateProjectNoteDataAction | recieveApiUpdateProjectNoteDataAction | requestApiDeleteProjectNoteAction | deleteSuccessProjectNoteAction
+interface firebaseNoteListenerAction  {
+    type: typeof FIREBASE_NOTE_LISTENER
+    payload: any
+}
+export type ProjectNoteActionType = requestApiProjectNotesAction | recieveApiProjectNotesAction | requestApiNoteByIdAction | recieveApiNoteByIdAction | requestApiCreateProjectNoteAction | recieveApiCreatedProjectNoteAction | requestApiUpdateProjectNoteDataAction | recieveApiUpdateProjectNoteDataAction | requestApiDeleteProjectNoteAction | deleteSuccessProjectNoteAction | firebaseNoteListenerAction

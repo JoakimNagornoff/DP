@@ -25,10 +25,8 @@ class WorkinDayModal extends Component<Props, State> {
         super(props);
         this.state = {
             datepickerOpen: false,
+     }
     }
-    }
-
-
     _onChange = form => console.log(form);
     setDate = (event, date) => {
       this.setState({datepickerOpen: false});

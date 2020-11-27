@@ -10,9 +10,10 @@ import {
   REQUEST_API_CREATE_PROJECT,
   RECIEVE_API_CREATE_PROJECT,
   REQUEST_API_PROJECT_DATA_WITH_ID,
-  RECIEVE_API_PROJECT_DATA_WITH_ID,
   DELETE_PROJECT_SUCCESS,
-  DELETE_PROJECT_END_SUCCESS
+  DELETE_PROJECT_END_SUCCESS,
+  FIREBASE_LISTENER,
+  FIREBASE_LISTENER_MODIFIED
 } from '../actions/Project/types';
 
 const initialState: ProjectState = {
@@ -56,11 +57,14 @@ const projectReducer = (
         }
         case RECIEVE_API_CREATE_PROJECT: {
           const newProject = action.payload;
+          console.log('recieve_create')
           return {
             ...state,
             loading: false,
-            data : [...state.data,newProject]
+            //data : [...state.data,newProject]
+    
           }
+          
         }
         case REQUEST_API_PROJECT_DATA_WITH_ID: {
           return {
@@ -68,11 +72,42 @@ const projectReducer = (
             loading: true
           }
         }
-        case RECIEVE_API_PROJECT_DATA_WITH_ID: {
+
+        case FIREBASE_LISTENER: {
+          //mappar current projects id 
+          const currentProjectIds = state.data.map(project => project.id);
+          // add, modified, removed
+          const addProjects = action.payload.filter(p => p.type === 'added').map(p => p.data)
+          const modifiedProjects = action.payload.filter(p => p.type === 'modified').map(p => p.data)
+          const removedProjects = action.payload.filter(p => p.type === 'removed').map(p => p.data.id)
+          //add project to array if id isnt includes in currentProjectsId
+          const projectsToAdd = addProjects.filter(p => !currentProjectIds.includes(p.id))
+          const projectArrayWithAdded = [...state.data, ...projectsToAdd]
+
+          //modified project
+          const projectArrayWithModified = projectArrayWithAdded.map(project => {
+            const modifiedProject = modifiedProjects.find(p => p.id === project.id)
+            if(modifiedProject) {
+              return modifiedProject
+            }
+            return project
+          })
+          //removed project
+          const projectArrayWithRemoved = projectArrayWithModified.filter(p => !removedProjects.includes(p.id))
+          
           return {
             ...state,
-            loading: false,
-            data: [...action.payload]
+            data: projectArrayWithRemoved
+          }
+
+        }
+        case FIREBASE_LISTENER_MODIFIED: {
+          const modified = action.payload
+          return {
+            ...state,
+            data : state.data.map(project => (
+              project.id === modified.id ? modified : project
+            ))
           }
         }
         case REQUEST_API_UPDATE_PROJECT: {

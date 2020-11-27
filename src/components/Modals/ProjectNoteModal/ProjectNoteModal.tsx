@@ -42,13 +42,14 @@ class ProjectNoteModal extends Component<Props, State> {
                   width: 300,
                   height: 400,
                 }}>
+                  <View style={{flexDirection: "row-reverse"}}>
                 <BackButton
                   onPress={() => {
                       this.props.hideModalProjectNote()
-                    
                   }}
                 />
-                <Text style={style.headerTitle}>{ProjectNoteModal.name}</Text>
+                </View>
+                <Text style={style.headerTitle}>{this.props.project?.project.name} </Text>
                 <TextInput
                       style={style.input}
                       placeholder="title"

@@ -27,6 +27,7 @@ componentDidMount() {
         if(data.user)
       console.log(data)
     })
+    this.setState({email: '', password: ''})
     this.props.navigation.navigate('Home')
   }
   refresh(){
@@ -44,22 +45,22 @@ componentDidMount() {
       }
   });
   }
- 
 
-  
   render() {
     const {navigate} = this.props.navigation;
     return (
       <View style={style.container}>
-        <Text>Välkommen till DP opt</Text>
-        <View>
-          <Text>Email address</Text>
+        <View style={style.topView}>
+        <Text style={style.headerTitle}>Välkommen till DP opt</Text>
+        </View>
+        <View style={style.middleView}>
+          <Text style={style.inputTitle}>Email address</Text>
           <TextInput style={style.input}
             autoCapitalize="none"
             onChangeText={email => this.setState({email})}
             value={this.state.email}
           />
-          <Text>PW</Text>
+          <Text style={style.inputTitle}>PW</Text>
           <TextInput
             style={style.input}
             secureTextEntry
@@ -67,10 +68,13 @@ componentDidMount() {
             onChangeText={password => this.setState({password})}
             value={this.state.password}
           />
-          <TouchableOpacity onPress={this.handleLogin}>
+          </View>
+           <View style={style.topView}>
+          <TouchableOpacity style={style.singInButton} onPress={this.handleLogin}>
             <Text style={{color: 'black', fontWeight: '500'}}>Sign in</Text>
           </TouchableOpacity>
-        </View>
+          </View>
+     
       </View>
     );
   }
@@ -95,8 +99,40 @@ const style = StyleSheet.create({
   container: {
     flex: 1,
   },
-  input : {
-    height: 200
+  topView: {
+    flex: 0.3,
+  },
+  middleView: {
+    flex: 0.4,
+  },
+  bottomView: {
+    flex: 0.2,
+  },
+  input: {
+    borderBottomColor: '#8A8F9E',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    height: 60,
+    fontSize: 15,
+    color: '#161F3D',
+  },
+  inputTitle: {
+    color: '#8A8F9E',
+    fontSize: 12,
+    textTransform: 'uppercase',
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: '400',
+    textAlign: 'center',
+    marginTop: 32,
+  },
+  singInButton: {
+    marginHorizontal: 30,
+    backgroundColor: '#E9446A',
+    borderRadius: 4,
+    height: 52,
+    alignItems: 'center',
+    justifyContent: 'center',
   }
 });
 

@@ -114,6 +114,7 @@ const style = StyleSheet.create({
         alignItems: 'center',
         width: 100,
         height: 80,
+        marginTop: 5
       },
 })
 
