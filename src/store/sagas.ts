@@ -91,7 +91,7 @@ function* getApiProjectNotesData(action) {
 //update project  data
 function* updateApiProjectData(action) {
   try {
-    const res = yield call( updateProjectData,action.id, action.hours, action.date);
+    const res = yield call( updateProjectData,action.id, action.hours, action.date, action.worker);
     yield put(recieveApiUpdateProjectdata(res));
   } catch(e) {
     console.log(e)

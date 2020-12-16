@@ -148,13 +148,11 @@ export const createData = async (name) => {
 
 
       //done
-    export const updateProjectData = async (id, hours, date) => {
+    export const updateProjectData = async (id, hours, date, worker) => {
       try {
         const token = await AsyncStorage.getItem('@idToken')
           if(token !== null) {
             const urlLink = `${environment.workinDay}/${id.id}`;
-            console.log(urlLink)
-            console.log(token)
           let Items =  []
           const response = await fetch(urlLink, {
           method: 'PATCH',
@@ -165,7 +163,8 @@ export const createData = async (name) => {
       },
       body: JSON.stringify({
           hours: hours.hours,
-          date: date.date
+          date: date.date,
+          worker: worker.worker
       })
       })
       const res = await response.json()

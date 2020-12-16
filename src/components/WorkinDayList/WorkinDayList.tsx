@@ -5,11 +5,12 @@ import { connect, ConnectedProps } from 'react-redux';
 import { ApplicationState } from 'store';
 
 
-function Item({date, hours}) {
+function Item({date, hours, worker}) {
     return (
         <View style={style.projectItem}>
           <Text>{formdateDate(date)}</Text>
           <Text>timmar: {hours}</Text>
+          <Text>{worker}</Text>
         </View>
     )
 }
@@ -21,11 +22,10 @@ class WorkinDayList extends Component<Props> {
               <FlatList
                 data={this.props.project?.project.workingDays}
                 renderItem={({item}) => (
-                  <Item date={item.date} hours={item.hours} />
+                  <Item date={item.date} hours={item.hours} worker={item.worker} />
                 )}
-                keyExtractor={item => item.date.toString() + item.hours}
+                keyExtractor={item => item.date.toString() + item.hours }
               />
-         
          </View>
         )
     }
@@ -59,10 +59,10 @@ function mapStateToProps(state: ApplicationState, props: OwnProps) {
     },
     projectItem: {
         backgroundColor: '#FFFFFF',
-        padding: 20,
+        padding: 15,
         marginVertical: 8,
         marginHorizontal: 16,
-        height: 60,
+        height: 80,
         width: 360,
       },
   })

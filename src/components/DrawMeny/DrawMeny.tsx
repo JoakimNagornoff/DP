@@ -5,6 +5,7 @@ import React from 'react';
 import { TouchableOpacity, View } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Home from 'screens/Home/HomeTabs';
+import ProfilScreen from 'screens/ProfilScreen/ProfilScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -14,6 +15,8 @@ export const DrawerComponent = () => {
       <Drawer.Navigator drawerContent={props => <CustomDrawerContent {...props} />}>
         <Drawer.Screen 
        name="Home" component={Home}></Drawer.Screen>
+         <Drawer.Screen 
+       name="Profil" component={ProfilScreen}></Drawer.Screen>
       </Drawer.Navigator>
     )
   }

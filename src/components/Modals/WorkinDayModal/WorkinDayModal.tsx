@@ -9,6 +9,7 @@ import TwentyDaysBack from 'components/DatePickerModal/components/TwentyDaysBack
 import formdateDate from 'components/DatePickerModal/components/formdateDate';
 import {updateProject, AddProjectHours, AddProjectDate} from 'store/actions/Project/action'
 import {closeModal} from 'store/actions/Modals/action'
+import { firebase } from '@react-native-firebase/firestore';
 
 
 if (Platform.OS === 'android') {
@@ -37,7 +38,9 @@ class WorkinDayModal extends Component<Props, State> {
     test() {
         const {date, hours} = this.props
         const id = this.props.project?.id
-        this.props.updateProject({id},{hours},{date})
+        const worker = firebase.auth().currentUser?.displayName
+
+       this.props.updateProject({id},{hours},{date},{worker})
         this.props.closeModal()
 
       }

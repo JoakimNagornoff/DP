@@ -15,12 +15,14 @@ import ProjectNote from './screens/ProjectNote/ProjectNote';
 import LoginScreen from './screens/LoginScreen/loginScreen';
 import rootReducer from './store/index';
 import EndsProjects from 'screens/EndsProjects';
+import FirstTimeSignIn from './screens/FirstTimeSignIn/FirstTimeSignIn'
 import Home from './screens/Home/HomeTabs'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PersistGate } from 'redux-persist/integration/react'
 import { DrawerComponent, HeaderLeft, HeaderRight } from 'components/DrawMeny/DrawMeny';
 
 import { initializeFirestoreListener, initializeFirestoreListenerEndProject, initializeFireStoreNoteListener } from 'store/firestore';
+import ProfilScreen from 'screens/ProfilScreen';
 
 
 const persistConig = {
@@ -52,6 +54,8 @@ store.subscribe(() => {
   console.log(JSON.stringify(store.getState()));
 });
 
+
+//firebase listener for each collection Projects, Notes, EndProjects
 initializeFirestoreListener(store.dispatch);
 initializeFireStoreNoteListener(store.dispatch)
 initializeFirestoreListenerEndProject(store.dispatch)
@@ -63,6 +67,7 @@ export const Routes: React.FC<RoutesProps> = ({}) => {
       <NavigationContainer>     
         <Stack.Navigator screenOptions={{gestureEnabled: true, gestureDirection: 'horizontal'}} initialRouteName="LogIn">
           <Stack.Screen  options={{ headerLeft: ({}) => <HeaderLeft />}}name="Home" component={DrawerComponent} />
+          <Stack.Screen name="FirstTimeSignIn" component={FirstTimeSignIn}/>
           <Stack.Screen options={{  headerLeft: ({}) => <HeaderLeft />}}name="Projects" component={ProjectScreen} />
           <Stack.Screen options={{  headerLeft: ({}) => <HeaderLeft />}} name="ProjectNote" component={ProjectNote} />
           <Stack.Screen name="LogIn" component={LoginScreen} />

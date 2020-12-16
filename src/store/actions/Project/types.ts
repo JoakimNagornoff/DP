@@ -28,6 +28,7 @@ export interface Project {
       workingDays: {
         date: string;
         hours: number;
+        worker: string;
       }[];
     }
    

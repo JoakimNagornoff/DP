@@ -45,12 +45,13 @@ export const requestApiProjectData = () => {
     }
   }
 
-  export const updateProject = (id, hours, date) => {
+  export const updateProject = (id, hours, date, worker) => {
     return {
       type: REQUEST_API_UPDATE_PROJECT,
       id,
       hours, 
-      date
+      date,
+      worker
     }
   }
 
